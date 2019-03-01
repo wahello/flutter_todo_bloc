@@ -80,7 +80,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
         yield LoginInitial();
       } catch (error) {
-        yield LoginFailure(error: error);
+        yield LoginFailure(error: error.toString());
       }
     }
   }

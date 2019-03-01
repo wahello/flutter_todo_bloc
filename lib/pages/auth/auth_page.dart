@@ -43,14 +43,9 @@ class _AuthPageState extends State<AuthPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(Configure.AppName),
-      ),
-      body: AuthForm(
-        authenticationBloc: _authenticationBloc,
-        loginBloc: _loginBloc,
-      ),
+    return AuthForm(
+      authenticationBloc: _authenticationBloc,
+      loginBloc: _loginBloc,
     );
   }
 }

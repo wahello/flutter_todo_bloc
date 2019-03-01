@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:flutter_todo_bloc/.env.dart';
 import 'package:flutter_todo_bloc/blocs/authentication_bloc.dart';
 import 'package:flutter_todo_bloc/blocs/login_bloc.dart';
+import 'package:flutter_todo_bloc/widgets/helpers/message_dialog.dart';
 import 'package:flutter_todo_bloc/widgets/ui_elements/loading_modal.dart';
 import 'package:flutter_todo_bloc/widgets/ui_elements/rounded_button.dart';
 
@@ -39,23 +41,28 @@ class _AuthFormState extends State<AuthForm> {
         builder: (BuildContext context, LoginState state) {
           Stack stack = Stack(
             children: <Widget>[
-              Container(
-                padding: EdgeInsets.all(10.0),
-                child: Center(
-                  child: SingleChildScrollView(
-                    child: Container(
-                      width: targetWidth,
-                      child: Form(
-                        key: _formKey,
-                        child: Column(
-                          children: <Widget>[
-                            _buildEmailField(),
-                            _buildPasswordField(),
-                            SizedBox(
-                              height: 20.0,
-                            ),
-                            _buildButtonRow(),
-                          ],
+              Scaffold(
+                appBar: AppBar(
+                  title: Text(Configure.AppName),
+                ),
+                body: Container(
+                  padding: EdgeInsets.all(10.0),
+                  child: Center(
+                    child: SingleChildScrollView(
+                      child: Container(
+                        width: targetWidth,
+                        child: Form(
+                          key: _formKey,
+                          child: Column(
+                            children: <Widget>[
+                              _buildEmailField(),
+                              _buildPasswordField(),
+                              SizedBox(
+                                height: 20.0,
+                              ),
+                              _buildButtonRow(),
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -67,6 +74,13 @@ class _AuthFormState extends State<AuthForm> {
 
           if (state is LoginInProgress) {
             stack.children.add(LoadingModal());
+          }
+
+          if (state is LoginFailure) {
+            Future.delayed(
+              Duration.zero,
+              () => MessageDialog.show(context, message: state.error),
+            );
           }
 
           return stack;
