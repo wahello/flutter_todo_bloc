@@ -28,13 +28,20 @@ abstract class AuthenticationState extends Equatable {
   AuthenticationState([List props = const []]) : super(props);
 }
 
-class AuthenticationUninitialized extends AuthenticationState {}
+class AuthenticationUninitialized extends AuthenticationState {
+  @override
+  String toString() => 'AuthenticationUninitialized';
+}
 
-class AuthenticationLoading extends AuthenticationState {}
+class AuthenticationAuthenticated extends AuthenticationState {
+  @override
+  String toString() => 'AuthenticationAuthenticated';
+}
 
-class AuthenticationAuthenticated extends AuthenticationState {}
-
-class AuthenticationUnauthenticated extends AuthenticationState {}
+class AuthenticationUnauthenticated extends AuthenticationState {
+  @override
+  String toString() => 'AuthenticationUnauthenticated';
+}
 // #endregion
 
 // #region Bloc
@@ -64,8 +71,6 @@ class AuthenticationBloc
     }
 
     if (event is LoggedIn) {
-      yield AuthenticationLoading();
-
       userRepository.persistUserData(event.user);
 
       yield AuthenticationAuthenticated();

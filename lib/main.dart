@@ -39,14 +39,16 @@ class _AppState extends State<App> {
 
   @override
   void initState() {
+    super.initState();
+
     _authenticationBloc = AuthenticationBloc(userRepository: userRepository);
     _authenticationBloc.dispatch(AppStarted());
-    super.initState();
   }
 
   @override
   void dispose() {
     _authenticationBloc.dispose();
+
     super.dispose();
   }
 
@@ -60,10 +62,6 @@ class _AppState extends State<App> {
         home: BlocBuilder<AuthenticationEvent, AuthenticationState>(
           bloc: _authenticationBloc,
           builder: (BuildContext context, AuthenticationState state) {
-            // if (state is AuthenticationUninitialized) {
-            //   return SplashPage();
-            // }
-
             if (state is AuthenticationAuthenticated) {
               return TodoListPage();
             }
@@ -71,10 +69,6 @@ class _AppState extends State<App> {
             if (state is AuthenticationUnauthenticated) {
               return AuthPage(userRepository: userRepository);
             }
-
-            // if (state is AuthenticationLoading) {
-            //   return LoadingIndicator();
-            // }
           },
         ),
       ),
