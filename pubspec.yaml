@@ -10,7 +10,7 @@ description: A new Flutter project.
 version: 1.0.0+1
 
 environment:
-  sdk: '>=2.0.0-dev.68.0 <3.0.0'
+  sdk: '>=2.1.0 <3.0.0'
 
 dependencies:
   flutter:
@@ -21,8 +21,9 @@ dependencies:
   cupertino_icons: ^0.1.2
   flutter_bloc: ^0.7.0
   meta: ^1.1.6
-  equatable: ^0.2.0
+  equatable: ^0.2.2
   http: ^0.12.0+1
+  shared_preferences: ^0.5.1+1
 
 dev_dependencies:
   flutter_test:

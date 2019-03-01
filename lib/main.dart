@@ -1,62 +1,82 @@
 import 'package:flutter/material.dart';
 
-void main() => runApp(MyApp());
+import 'package:bloc/bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-class MyApp extends StatelessWidget {
+import 'package:flutter_todo_bloc/pages/auth/auth_page.dart';
+import 'package:flutter_todo_bloc/pages/todo/todo_list_page.dart';
+import 'package:flutter_todo_bloc/repositories/user_repository.dart';
+import 'package:flutter_todo_bloc/blocs/authentication_bloc.dart';
+
+class SimpleBlocDelegate extends BlocDelegate {
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
-    );
+  onTransition(Transition transition) {
+    print(transition);
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+void main() {
+  BlocSupervisor().delegate = SimpleBlocDelegate();
 
-  final String title;
+  final UserRepository userRepository = UserRepository();
 
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
+  runApp(App(userRepository: userRepository));
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class App extends StatefulWidget {
+  final UserRepository userRepository;
 
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
+  App({Key key, @required this.userRepository})
+      : assert(userRepository != null),
+        super(key: key);
+
+  State<App> createState() => _AppState();
+}
+
+class _AppState extends State<App> {
+  AuthenticationBloc _authenticationBloc;
+  UserRepository get userRepository => widget.userRepository;
+
+  @override
+  void initState() {
+    _authenticationBloc = AuthenticationBloc(userRepository: userRepository);
+    _authenticationBloc.dispatch(AppStarted());
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _authenticationBloc.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.display1,
-            ),
-          ],
+    return BlocProviderTree(
+      blocProviders: [
+        BlocProvider<AuthenticationBloc>(bloc: _authenticationBloc)
+      ],
+      child: MaterialApp(
+        home: BlocBuilder<AuthenticationEvent, AuthenticationState>(
+          bloc: _authenticationBloc,
+          builder: (BuildContext context, AuthenticationState state) {
+            // if (state is AuthenticationUninitialized) {
+            //   return SplashPage();
+            // }
+
+            if (state is AuthenticationAuthenticated) {
+              return TodoListPage();
+            }
+
+            if (state is AuthenticationUnauthenticated) {
+              return AuthPage(userRepository: userRepository);
+            }
+
+            // if (state is AuthenticationLoading) {
+            //   return LoadingIndicator();
+            // }
+          },
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
       ),
     );
   }
