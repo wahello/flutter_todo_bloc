@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 
 import 'package:bloc/bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:http/http.dart' as http;
 
 import 'package:flutter_todo_bloc/pages/auth/auth_page.dart';
 import 'package:flutter_todo_bloc/pages/todo/todo_list_page.dart';
+import 'package:flutter_todo_bloc/providers/firebase_provider.dart';
 import 'package:flutter_todo_bloc/repositories/user_repository.dart';
 import 'package:flutter_todo_bloc/blocs/authentication_bloc.dart';
 
@@ -18,7 +20,11 @@ class SimpleBlocDelegate extends BlocDelegate {
 void main() {
   BlocSupervisor().delegate = SimpleBlocDelegate();
 
-  final UserRepository userRepository = UserRepository();
+  final UserRepository userRepository = UserRepository(
+    firebaseProvider: FirebaseProvider(
+      client: http.Client(),
+    ),
+  );
 
   runApp(App(userRepository: userRepository));
 }

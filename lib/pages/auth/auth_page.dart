@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_todo_bloc/pages/auth/auth_form.dart';
 import 'package:meta/meta.dart';
 
-import 'package:flutter_todo_bloc/.env.dart';
 import 'package:flutter_todo_bloc/blocs/authentication_bloc.dart';
 import 'package:flutter_todo_bloc/blocs/login_bloc.dart';
 import 'package:flutter_todo_bloc/repositories/user_repository.dart';
