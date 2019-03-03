@@ -11,7 +11,9 @@ import 'package:flutter_todo_bloc/repositories/user_repository.dart';
 class AuthPage extends StatefulWidget {
   final UserRepository userRepository;
 
-  AuthPage({@required this.userRepository}) : assert(userRepository != null);
+  AuthPage({
+    @required this.userRepository,
+  }) : assert(userRepository != null);
 
   _AuthPageState createState() => _AuthPageState();
 }
@@ -43,7 +45,6 @@ class _AuthPageState extends State<AuthPage> {
   @override
   Widget build(BuildContext context) {
     return AuthForm(
-      authenticationBloc: _authenticationBloc,
       loginBloc: _loginBloc,
     );
   }

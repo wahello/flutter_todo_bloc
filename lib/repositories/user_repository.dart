@@ -9,38 +9,17 @@ import 'package:flutter_todo_bloc/providers/firebase_provider.dart';
 class UserRepository {
   final FirebaseProvider firebaseProvider;
 
-  UserRepository({@required this.firebaseProvider})
-      : assert(firebaseProvider != null);
+  UserRepository({
+    @required this.firebaseProvider,
+  }) : assert(firebaseProvider != null);
 
   Future<User> authenticate({
     @required String email,
     @required String password,
   }) async {
-    final Map<String, dynamic> responseData =
-        await firebaseProvider.authenticate(email, password);
+    final user = await firebaseProvider.authenticate(email, password);
 
-    if (responseData.containsKey('idToken')) {
-      final DateTime now = DateTime.now();
-      final DateTime expiryTime =
-          now.add(Duration(seconds: int.parse(responseData['expiresIn'])));
-
-      final User user = User(
-          id: responseData['localId'],
-          email: responseData['email'],
-          token: responseData['idToken'],
-          refreshToken: responseData['refreshToken'],
-          expiryTime: expiryTime.toIso8601String());
-
-      return user;
-    } else if (responseData['error']['message'] == 'EMAIL_NOT_FOUND') {
-      throw Exception('Email is not found.');
-    } else if (responseData['error']['message'] == 'INVALID_PASSWORD') {
-      throw Exception('Password is invalid.');
-    } else if (responseData['error']['message'] == 'USER_DISABLED') {
-      throw Exception('The user account has been disabled.');
-    }
-
-    throw Exception('Unknown error.');
+    return user;
   }
 
   Future<void> persistUserData(User user) async {

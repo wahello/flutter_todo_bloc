@@ -8,7 +8,9 @@ import 'package:flutter_todo_bloc/pages/auth/auth_page.dart';
 import 'package:flutter_todo_bloc/pages/todo/todo_list_page.dart';
 import 'package:flutter_todo_bloc/providers/firebase_provider.dart';
 import 'package:flutter_todo_bloc/repositories/user_repository.dart';
+import 'package:flutter_todo_bloc/repositories/todo_repository.dart';
 import 'package:flutter_todo_bloc/blocs/authentication_bloc.dart';
+import 'package:flutter_todo_bloc/blocs/todo_bloc.dart';
 
 class SimpleBlocDelegate extends BlocDelegate {
   @override
@@ -20,20 +22,35 @@ class SimpleBlocDelegate extends BlocDelegate {
 void main() {
   BlocSupervisor().delegate = SimpleBlocDelegate();
 
-  final UserRepository userRepository = UserRepository(
-    firebaseProvider: FirebaseProvider(
-      client: http.Client(),
-    ),
+  final FirebaseProvider firebaseProvider = FirebaseProvider(
+    client: http.Client(),
   );
 
-  runApp(App(userRepository: userRepository));
+  final UserRepository userRepository = UserRepository(
+    firebaseProvider: firebaseProvider,
+  );
+
+  final TodoRepository todoRepository = TodoRepository(
+    firebaseProvider: firebaseProvider,
+    userRepository: userRepository,
+  );
+
+  runApp(App(
+    userRepository: userRepository,
+    todoRepository: todoRepository,
+  ));
 }
 
 class App extends StatefulWidget {
   final UserRepository userRepository;
+  final TodoRepository todoRepository;
 
-  App({Key key, @required this.userRepository})
-      : assert(userRepository != null),
+  App({
+    Key key,
+    @required this.userRepository,
+    @required this.todoRepository,
+  })  : assert(userRepository != null),
+        assert(todoRepository != null),
         super(key: key);
 
   State<App> createState() => _AppState();
@@ -41,7 +58,9 @@ class App extends StatefulWidget {
 
 class _AppState extends State<App> {
   AuthenticationBloc _authenticationBloc;
+  TodoBloc _todoBloc;
   UserRepository get userRepository => widget.userRepository;
+  TodoRepository get todoRepository => widget.todoRepository;
 
   @override
   void initState() {
@@ -49,10 +68,13 @@ class _AppState extends State<App> {
 
     _authenticationBloc = AuthenticationBloc(userRepository: userRepository);
     _authenticationBloc.dispatch(AppStarted());
+
+    _todoBloc = TodoBloc(todoRepository: todoRepository);
   }
 
   @override
   void dispose() {
+    _todoBloc.dispose();
     _authenticationBloc.dispose();
 
     super.dispose();
@@ -62,7 +84,8 @@ class _AppState extends State<App> {
   Widget build(BuildContext context) {
     return BlocProviderTree(
       blocProviders: [
-        BlocProvider<AuthenticationBloc>(bloc: _authenticationBloc)
+        BlocProvider<AuthenticationBloc>(bloc: _authenticationBloc),
+        BlocProvider<TodoBloc>(bloc: _todoBloc),
       ],
       child: MaterialApp(
         home: BlocBuilder<AuthenticationEvent, AuthenticationState>(
@@ -72,7 +95,10 @@ class _AppState extends State<App> {
               return TodoListPage();
             }
 
-            if (state is AuthenticationUnauthenticated) {
+            // TODO: Consider to use splash page
+
+            if (state is AuthenticationUninitialized ||
+                state is AuthenticationUnauthenticated) {
               return AuthPage(userRepository: userRepository);
             }
           },

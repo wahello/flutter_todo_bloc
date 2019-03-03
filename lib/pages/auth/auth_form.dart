@@ -3,19 +3,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:flutter_todo_bloc/.env.dart';
-import 'package:flutter_todo_bloc/blocs/authentication_bloc.dart';
 import 'package:flutter_todo_bloc/blocs/login_bloc.dart';
 import 'package:flutter_todo_bloc/widgets/helpers/message_dialog.dart';
 import 'package:flutter_todo_bloc/widgets/ui_elements/loading_modal.dart';
 import 'package:flutter_todo_bloc/widgets/ui_elements/rounded_button.dart';
 
 class AuthForm extends StatefulWidget {
-  final AuthenticationBloc authenticationBloc;
   final LoginBloc loginBloc;
 
-  AuthForm({@required this.authenticationBloc, @required this.loginBloc})
-      : assert(authenticationBloc != null),
-        assert(loginBloc != null);
+  AuthForm({
+    Key key,
+    @required this.loginBloc,
+  })  : assert(loginBloc != null),
+        super(key: key);
 
   @override
   State<StatefulWidget> createState() => _AuthFormState();
@@ -76,7 +76,7 @@ class _AuthFormState extends State<AuthForm> {
             stack.children.add(LoadingModal());
           }
 
-          if (state is LoginFailure) {
+          if (state is LoginError) {
             Future.delayed(
               Duration.zero,
               () => MessageDialog.show(context, message: state.error),

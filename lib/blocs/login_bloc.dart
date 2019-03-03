@@ -14,8 +14,10 @@ class LoginStarted extends LoginEvent {
   final String email;
   final String password;
 
-  LoginStarted({@required this.email, @required this.password})
-      : assert(email != null),
+  LoginStarted({
+    @required this.email,
+    @required this.password,
+  })  : assert(email != null),
         assert(password != null),
         super([email, password]);
 
@@ -29,21 +31,16 @@ abstract class LoginState extends Equatable {
   LoginState([List props = const []]) : super(props);
 }
 
-class LoginInProgress extends LoginState {
-  @override
-  String toString() => 'LoginInProgress';
-}
+class LoginInProgress extends LoginState {}
 
-class LoginInitial extends LoginState {
-  @override
-  String toString() => 'LoginInitial';
-}
+class LoginInitial extends LoginState {}
 
-class LoginFailure extends LoginState {
+class LoginError extends LoginState {
   final String error;
 
-  LoginFailure({@required this.error})
-      : assert(error != null),
+  LoginError({
+    @required this.error,
+  })  : assert(error != null),
         super([error]);
 
   @override
@@ -55,8 +52,10 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   final UserRepository userRepository;
   final AuthenticationBloc authenticationBloc;
 
-  LoginBloc({@required this.userRepository, @required this.authenticationBloc})
-      : assert(userRepository != null),
+  LoginBloc({
+    @required this.userRepository,
+    @required this.authenticationBloc,
+  })  : assert(userRepository != null),
         assert(authenticationBloc != null);
 
   @override
@@ -80,7 +79,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
         yield LoginInitial();
       } catch (error) {
-        yield LoginFailure(error: error.toString());
+        yield LoginError(error: error.toString());
       }
     }
   }

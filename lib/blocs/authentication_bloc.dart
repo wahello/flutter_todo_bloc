@@ -15,8 +15,9 @@ class AppStarted extends AuthenticationEvent {}
 class LoggedIn extends AuthenticationEvent {
   final User user;
 
-  LoggedIn({@required this.user})
-      : assert(user != null),
+  LoggedIn({
+    @required this.user,
+  })  : assert(user != null),
         super([user]);
 }
 
@@ -28,20 +29,11 @@ abstract class AuthenticationState extends Equatable {
   AuthenticationState([List props = const []]) : super(props);
 }
 
-class AuthenticationUninitialized extends AuthenticationState {
-  @override
-  String toString() => 'AuthenticationUninitialized';
-}
+class AuthenticationUninitialized extends AuthenticationState {}
 
-class AuthenticationAuthenticated extends AuthenticationState {
-  @override
-  String toString() => 'AuthenticationAuthenticated';
-}
+class AuthenticationAuthenticated extends AuthenticationState {}
 
-class AuthenticationUnauthenticated extends AuthenticationState {
-  @override
-  String toString() => 'AuthenticationUnauthenticated';
-}
+class AuthenticationUnauthenticated extends AuthenticationState {}
 // #endregion
 
 // #region Bloc
@@ -49,11 +41,12 @@ class AuthenticationBloc
     extends Bloc<AuthenticationEvent, AuthenticationState> {
   final UserRepository userRepository;
 
-  AuthenticationBloc({@required this.userRepository})
-      : assert(userRepository != null);
+  AuthenticationBloc({
+    @required this.userRepository,
+  }) : assert(userRepository != null);
 
   @override
-  AuthenticationState get initialState => AuthenticationUnauthenticated();
+  AuthenticationState get initialState => AuthenticationUninitialized();
 
   @override
   Stream<AuthenticationState> mapEventToState(
@@ -74,6 +67,12 @@ class AuthenticationBloc
       userRepository.persistUserData(event.user);
 
       yield AuthenticationAuthenticated();
+    }
+
+    if (event is LoggedOut) {
+      userRepository.clearData();
+
+      yield AuthenticationUnauthenticated();
     }
   }
 }
