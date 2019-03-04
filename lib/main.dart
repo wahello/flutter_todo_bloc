@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 
 import 'package:flutter_todo_bloc/pages/auth/auth_page.dart';
 import 'package:flutter_todo_bloc/pages/todo/todo_list_page.dart';
+import 'package:flutter_todo_bloc/pages/splash/splash_page.dart';
 import 'package:flutter_todo_bloc/providers/firebase_provider.dart';
 import 'package:flutter_todo_bloc/repositories/user_repository.dart';
 import 'package:flutter_todo_bloc/repositories/todo_repository.dart';
@@ -91,14 +92,15 @@ class _AppState extends State<App> {
         home: BlocBuilder<AuthenticationEvent, AuthenticationState>(
           bloc: _authenticationBloc,
           builder: (BuildContext context, AuthenticationState state) {
+            if (state is AuthenticationUninitialized) {
+              return SplashPage();
+            }
+
             if (state is AuthenticationAuthenticated) {
               return TodoListPage();
             }
 
-            // TODO: Consider to use splash page
-
-            if (state is AuthenticationUninitialized ||
-                state is AuthenticationUnauthenticated) {
+            if (state is AuthenticationUnauthenticated) {
               return AuthPage(userRepository: userRepository);
             }
           },
