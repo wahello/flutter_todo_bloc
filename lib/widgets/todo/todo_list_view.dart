@@ -20,7 +20,7 @@ class TodoListView extends StatelessWidget {
 
   Widget _buildEmptyText() {
     String emptyText =
-        'This is boring here. \r\nCreate a Not Done todo to make it crowd.';
+        'This is boring here. \r\nCreate a todo to make it crowd.';
 
     return Container(
       color: Color.fromARGB(16, 0, 0, 0),
@@ -56,10 +56,17 @@ class TodoListView extends StatelessWidget {
         return Dismissible(
           key: Key(todo.id),
           onDismissed: (DismissDirection direction) {},
-          child: TodoCard(todo),
+          child: TodoCard(
+            todo: todo,
+            onTodoSelected: (todo) => this.onTodoSelected(context, todo),
+          ),
           background: Container(color: Colors.red),
         );
       },
     );
+  }
+
+  void onTodoSelected(BuildContext context, Todo todo) {
+    Navigator.pushNamed(context, '/editor/${todo.id}');
   }
 }

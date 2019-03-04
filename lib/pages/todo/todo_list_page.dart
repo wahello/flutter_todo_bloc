@@ -18,13 +18,13 @@ class TodoListPage extends StatefulWidget {
 
 class _TodoListPageState extends State<TodoListPage> {
   TodoBloc _todoBloc;
+  List<Todo> todos = [];
 
   @override
   void initState() {
     super.initState();
 
     _todoBloc = BlocProvider.of<TodoBloc>(context);
-
     _todoBloc.dispatch(FetchTodos());
   }
 
@@ -33,9 +33,7 @@ class _TodoListPageState extends State<TodoListPage> {
     return BlocBuilder(
       bloc: _todoBloc,
       builder: (BuildContext context, TodoState state) {
-        List<Todo> todos = [];
-
-        if (state is TodoLoaded) {
+        if (state is TodosLoaded) {
           todos = state.todos;
         }
 
@@ -45,7 +43,7 @@ class _TodoListPageState extends State<TodoListPage> {
           ],
         );
 
-        if (state is TodoLoading) {
+        if (state is TodosLoading) {
           stack.children.add(LoadingModal());
         }
 

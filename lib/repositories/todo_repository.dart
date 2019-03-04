@@ -8,6 +8,7 @@ import 'package:flutter_todo_bloc/providers/firebase_provider.dart';
 class TodoRepository {
   final FirebaseProvider firebaseProvider;
   final UserRepository userRepository;
+  List<Todo> todos;
 
   TodoRepository({
     @required this.firebaseProvider,
@@ -17,8 +18,14 @@ class TodoRepository {
 
   Future<List<Todo>> fetchTodos() async {
     final User user = await userRepository.getUser();
-    final List<Todo> todos = await firebaseProvider.fetchTodos(user);
+    todos = await firebaseProvider.fetchTodos(user);
 
     return todos;
+  }
+
+  Todo fetchTodo(String todoId) {
+    final Todo todo = todos.firstWhere((todo) => todo.id == todoId);
+
+    return todo;
   }
 }

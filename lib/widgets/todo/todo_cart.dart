@@ -1,12 +1,20 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_todo_bloc/models/todo.dart';
+import 'package:flutter_todo_bloc/typedefs.dart';
 import 'package:flutter_todo_bloc/widgets/helpers/priority_helper.dart';
 
 class TodoCard extends StatelessWidget {
   final Todo todo;
+  final OnTodoSelected onTodoSelected;
 
-  TodoCard(this.todo);
+  TodoCard({
+    Key key,
+    @required this.todo,
+    @required this.onTodoSelected,
+  })  : assert(todo != null),
+        assert(onTodoSelected != null),
+        super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -52,9 +60,7 @@ class TodoCard extends StatelessWidget {
           ),
           IconButton(
             icon: Icon(Icons.edit),
-            onPressed: () {
-              Navigator.pushNamed(context, '/editor/${todo.id}');
-            },
+            onPressed: () => this.onTodoSelected(this.todo),
           )
         ],
       ),

@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_todo_bloc/pages/auth/auth_page.dart';
 import 'package:flutter_todo_bloc/pages/todo/todo_list_page.dart';
 import 'package:flutter_todo_bloc/pages/splash/splash_page.dart';
+import 'package:flutter_todo_bloc/pages/todo/todo_editor_page.dart';
 import 'package:flutter_todo_bloc/providers/firebase_provider.dart';
 import 'package:flutter_todo_bloc/repositories/user_repository.dart';
 import 'package:flutter_todo_bloc/repositories/todo_repository.dart';
@@ -105,6 +106,29 @@ class _AppState extends State<App> {
             }
           },
         ),
+        onGenerateRoute: (RouteSettings settings) {
+          final List<String> pathElements = settings.name.split('/');
+
+          if (pathElements[0] != '') {
+            return null;
+          }
+
+          if (pathElements[1] == 'editor') {
+            final String todoId =
+                pathElements.length >= 3 ? pathElements[2] : null;
+            final String priority =
+                pathElements.length == 4 ? pathElements[3] : null;
+
+            return MaterialPageRoute<bool>(
+              builder: (BuildContext context) => TodoEditorPage(
+                    todoId: todoId,
+                    priority: priority,
+                  ),
+            );
+          }
+
+          return null;
+        },
       ),
     );
   }

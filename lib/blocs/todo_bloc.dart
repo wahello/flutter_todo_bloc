@@ -12,6 +12,18 @@ abstract class TodoEvent extends Equatable {
 
 class FetchTodos extends TodoEvent {}
 
+class FetchTodo extends TodoEvent {
+  final String id;
+
+  FetchTodo({
+    @required this.id,
+  })  : assert(id != null),
+        super([id]);
+
+  @override
+  String toString() => 'FetchTodo { id: $id}';
+}
+
 // #endregion
 
 // #region States
@@ -19,16 +31,26 @@ abstract class TodoState extends Equatable {
   TodoState([List props = const []]) : super(props);
 }
 
-class TodoEmpty extends TodoState {}
+class TodosEmpty extends TodoState {}
+
+class TodosLoading extends TodoState {}
+
+class TodosLoaded extends TodoState {
+  final List<Todo> todos;
+
+  TodosLoaded({
+    @required this.todos,
+  }) : assert(todos != null);
+}
 
 class TodoLoading extends TodoState {}
 
 class TodoLoaded extends TodoState {
-  final List<Todo> todos;
+  final Todo todo;
 
   TodoLoaded({
-    @required this.todos,
-  }) : assert(todos != null);
+    @required this.todo,
+  }) : assert(todo != null);
 }
 
 class TodoError extends TodoState {
@@ -42,6 +64,8 @@ class TodoError extends TodoState {
   @override
   String toString() => 'LoginFailure {error: $error}';
 }
+
+class TodoTest extends TodoState {}
 // #endregion
 
 class TodoBloc extends Bloc<TodoEvent, TodoState> {
@@ -52,7 +76,7 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
   }) : assert(todoRepository != null);
 
   @override
-  TodoState get initialState => TodoEmpty();
+  TodoState get initialState => TodosEmpty();
 
   @override
   Stream<TodoState> mapEventToState(
@@ -60,12 +84,24 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     TodoEvent event,
   ) async* {
     if (event is FetchTodos) {
-      yield TodoLoading();
+      yield TodosLoading();
 
       try {
         final List<Todo> todos = await todoRepository.fetchTodos();
 
-        yield TodoLoaded(todos: todos);
+        yield TodosLoaded(todos: todos);
+      } catch (error) {
+        yield TodoError(error: error.toString());
+      }
+    }
+
+    if (event is FetchTodo) {
+      yield TodoLoading();
+
+      try {
+        final Todo todo = todoRepository.fetchTodo(event.id);
+
+        yield TodoLoaded(todo: todo);
       } catch (error) {
         yield TodoError(error: error.toString());
       }
