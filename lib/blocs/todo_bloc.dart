@@ -24,6 +24,8 @@ class FetchTodo extends TodoEvent {
   String toString() => 'FetchTodo { id: $id}';
 }
 
+class UnloadTodo extends TodoEvent {}
+
 // #endregion
 
 // #region States
@@ -65,7 +67,7 @@ class TodoError extends TodoState {
   String toString() => 'LoginFailure {error: $error}';
 }
 
-class TodoTest extends TodoState {}
+class TodoUnloaded extends TodoState {}
 // #endregion
 
 class TodoBloc extends Bloc<TodoEvent, TodoState> {
@@ -105,6 +107,10 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
       } catch (error) {
         yield TodoError(error: error.toString());
       }
+    }
+
+    if (event is UnloadTodo) {
+      yield TodoUnloaded();
     }
   }
 }
