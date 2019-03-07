@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:flutter_todo_bloc/.env.dart';
+import 'package:flutter_todo_bloc/blocs/authentication_bloc.dart';
 import 'package:flutter_todo_bloc/blocs/todo_bloc.dart';
 import 'package:flutter_todo_bloc/models/filter.dart';
 import 'package:flutter_todo_bloc/models/todo.dart';
@@ -17,6 +18,7 @@ class TodoListPage extends StatefulWidget {
 }
 
 class _TodoListPageState extends State<TodoListPage> {
+  AuthenticationBloc _authenticationBloc;
   TodoBloc _todoBloc;
   List<Todo> todos = [];
 
@@ -24,6 +26,7 @@ class _TodoListPageState extends State<TodoListPage> {
   void initState() {
     super.initState();
 
+    _authenticationBloc = BlocProvider.of<AuthenticationBloc>(context);
     _todoBloc = BlocProvider.of<TodoBloc>(context);
     _todoBloc.dispatch(FetchTodos());
   }
@@ -100,7 +103,7 @@ class _TodoListPageState extends State<TodoListPage> {
                 bool confirm = await ConfirmDialog.show(context);
 
                 if (confirm) {
-                  // vm.onLogOut();
+                  _authenticationBloc.dispatch(LoggedOut());
                 }
                 break;
             }
