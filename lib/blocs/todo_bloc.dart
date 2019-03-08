@@ -2,6 +2,7 @@ import 'package:meta/meta.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
+import 'package:flutter_todo_bloc/models/filter.dart';
 import 'package:flutter_todo_bloc/models/todo.dart';
 import 'package:flutter_todo_bloc/repositories/todo_repository.dart';
 
@@ -12,6 +13,18 @@ abstract class TodoEvent extends Equatable {
 
 class FetchTodos extends TodoEvent {}
 
+class FilterTodos extends TodoEvent {
+  final Filter filter;
+
+  FilterTodos({
+    @required this.filter,
+  })  : assert(filter != null),
+        super([filter]);
+
+  @override
+  String toString() => 'FilterTodos { filter: $filter }';
+}
+
 class FetchTodo extends TodoEvent {
   final String id;
 
@@ -21,7 +34,7 @@ class FetchTodo extends TodoEvent {
         super([id]);
 
   @override
-  String toString() => 'FetchTodo { id: $id}';
+  String toString() => 'FetchTodo { id: $id }';
 }
 
 class UnloadTodo extends TodoEvent {}
@@ -111,6 +124,12 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
 
     if (event is UnloadTodo) {
       yield TodoUnloaded();
+    }
+
+    if (event is FilterTodos) {
+      final List<Todo> todos = await todoRepository.filterTodos(event.filter);
+
+      yield TodosLoaded(todos: todos);
     }
   }
 }

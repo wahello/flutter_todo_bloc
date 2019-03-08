@@ -2,6 +2,7 @@ import 'package:meta/meta.dart';
 
 import 'package:flutter_todo_bloc/models/user.dart';
 import 'package:flutter_todo_bloc/models/todo.dart';
+import 'package:flutter_todo_bloc/models/filter.dart';
 import 'package:flutter_todo_bloc/repositories/user_repository.dart';
 import 'package:flutter_todo_bloc/providers/firebase_provider.dart';
 
@@ -27,5 +28,15 @@ class TodoRepository {
     final Todo todo = todos.firstWhere((todo) => todo.id == todoId);
 
     return todo;
+  }
+
+  List<Todo> filterTodos(Filter filter) {
+    if (filter == Filter.All) {
+      return todos;
+    }
+
+    return todos
+        .where((todo) => todo.isDone == (filter == Filter.Done))
+        .toList();
   }
 }

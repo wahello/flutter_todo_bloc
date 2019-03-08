@@ -89,7 +89,9 @@ class _TodoListPageState extends State<TodoListPage> {
             ];
           },
           onSelected: (Filter filter) {
-            // vm.onFilter(filter);
+            print(filter);
+
+            _todoBloc.dispatch(FilterTodos(filter: filter));
           },
         ),
         PopupMenuButton<String>(
