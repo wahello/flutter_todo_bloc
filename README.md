@@ -1,16 +1,32 @@
-# flutter_todo_bloc
+# Flutter Todo BLOC
 
-A new Flutter project.
+Yet another Todo app, now using Flutter with BLOC.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+This is re-implementation of [Flutter Todo app](https://github.com/tuannguyendotme/flutter_todo) but using BLOC instead of ScopedModel.
 
-A few resources to get you started if this is your first Flutter project:
+Features:
 
-- [Lab: Write your first Flutter app](https://flutter.io/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.io/docs/cookbook)
+- Create/edit todo
+- Delete todo by swipping
+- Undo delete
+- Mark done/not done in list
+- Filter todo list by status (all/done/not done)
+- Change theme (light to dark and vice versa) at runtime
+- Enable shortcuts to create todo
+- Login/logout
+- Register new account
 
-For help getting started with Flutter, view our 
-[online documentation](https://flutter.io/docs), which offers tutorials, 
-samples, guidance on mobile development, and a full API reference.
+To get start, run below command in Terminal
+
+```
+cp .env.example.dart .env.dart
+```
+
+then add Firebase database's URL and API key to .env.dart.
+
+---
+
+For more information about Flutter, visit [Flutter web site](https://flutter.io/).  
+For more information about Firebase, visit [Firebase web site](https://firebase.google.com/).
