@@ -50,11 +50,14 @@ class TodosLoading extends TodoState {}
 
 class TodosLoaded extends TodoState {
   final List<Todo> todos;
+  final Filter filter;
 
   TodosLoaded({
     @required this.todos,
+    @required this.filter,
   })  : assert(todos != null),
-        super(todos);
+        assert(filter != null),
+        super([todos, filter]);
 
   @override
   String toString() => 'TodosLoaded {todos: $todos}';
@@ -108,7 +111,7 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
       try {
         final List<Todo> todos = await todoRepository.fetchTodos();
 
-        yield TodosLoaded(todos: todos);
+        yield TodosLoaded(todos: todos, filter: Filter.All);
       } catch (error) {
         yield TodoError(error: error.toString());
       }
@@ -129,7 +132,7 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     if (event is FilterTodos) {
       final List<Todo> todos = todoRepository.filterTodos(event.filter);
 
-      yield TodosLoaded(todos: todos);
+      yield TodosLoaded(todos: todos, filter: event.filter);
     }
   }
 }

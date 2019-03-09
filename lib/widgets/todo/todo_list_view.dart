@@ -9,8 +9,11 @@ class TodoListView extends StatelessWidget {
   final TodoBloc todoBloc;
   final List<Todo> todos;
 
-  TodoListView({Key key, @required this.todoBloc, @required this.todos})
-      : assert(todoBloc != null),
+  TodoListView({
+    Key key,
+    @required this.todoBloc,
+    @required this.todos,
+  })  : assert(todoBloc != null),
         assert(todos != null),
         super(key: key);
 

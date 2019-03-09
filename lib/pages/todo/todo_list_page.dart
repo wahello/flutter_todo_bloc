@@ -21,6 +21,7 @@ class _TodoListPageState extends State<TodoListPage> {
   AuthenticationBloc _authenticationBloc;
   TodoBloc _todoBloc;
   List<Todo> todos = [];
+  Filter filter = Filter.All;
 
   @override
   void initState() {
@@ -38,11 +39,12 @@ class _TodoListPageState extends State<TodoListPage> {
       builder: (BuildContext context, TodoState state) {
         if (state is TodosLoaded) {
           todos = state.todos;
+          filter = state.filter;
         }
 
         Stack stack = Stack(
           children: <Widget>[
-            _buildPageContent(context, todos),
+            _buildPageContent(context),
           ],
         );
 
@@ -72,17 +74,17 @@ class _TodoListPageState extends State<TodoListPage> {
           itemBuilder: (BuildContext context) {
             return [
               CheckedPopupMenuItem<Filter>(
-                checked: false,
+                checked: filter == Filter.All,
                 value: Filter.All,
                 child: Text('All'),
               ),
               CheckedPopupMenuItem<Filter>(
-                checked: false,
+                checked: filter == Filter.Done,
                 value: Filter.Done,
                 child: Text('Done'),
               ),
               CheckedPopupMenuItem<Filter>(
-                checked: false,
+                checked: filter == Filter.NotDone,
                 value: Filter.NotDone,
                 child: Text('Not Done'),
               ),
@@ -147,11 +149,14 @@ class _TodoListPageState extends State<TodoListPage> {
     );
   }
 
-  Widget _buildPageContent(BuildContext context, List<Todo> todos) {
+  Widget _buildPageContent(BuildContext context) {
     return Scaffold(
       appBar: _buildAppBar(context),
       floatingActionButton: _buildFloatingActionButton(context, false),
-      body: TodoListView(todoBloc: _todoBloc, todos: todos),
+      body: TodoListView(
+        todoBloc: _todoBloc,
+        todos: todos,
+      ),
     );
   }
 }
