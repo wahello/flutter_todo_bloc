@@ -89,8 +89,6 @@ class _TodoListPageState extends State<TodoListPage> {
             ];
           },
           onSelected: (Filter filter) {
-            print(filter);
-
             _todoBloc.dispatch(FilterTodos(filter: filter));
           },
         ),
@@ -153,7 +151,7 @@ class _TodoListPageState extends State<TodoListPage> {
     return Scaffold(
       appBar: _buildAppBar(context),
       floatingActionButton: _buildFloatingActionButton(context, false),
-      body: TodoListView(todos: todos),
+      body: TodoListView(todoBloc: _todoBloc, todos: todos),
     );
   }
 }

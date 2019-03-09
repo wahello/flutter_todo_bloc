@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_todo_bloc/blocs/todo_bloc.dart';
 import 'package:flutter_todo_bloc/models/todo.dart';
 import 'package:flutter_todo_bloc/widgets/todo/todo_cart.dart';
 
 class TodoListView extends StatelessWidget {
+  final TodoBloc todoBloc;
   final List<Todo> todos;
 
-  TodoListView({Key key, @required this.todos})
-      : assert(todos != null),
+  TodoListView({Key key, @required this.todoBloc, @required this.todos})
+      : assert(todoBloc != null),
+        assert(todos != null),
         super(key: key);
 
   @override
@@ -67,6 +70,8 @@ class TodoListView extends StatelessWidget {
   }
 
   void onTodoSelected(BuildContext context, Todo todo) {
+    todoBloc.dispatch(FetchTodo(id: todo.id));
+
     Navigator.pushNamed(context, '/editor/${todo.id}');
   }
 }

@@ -202,24 +202,15 @@ class _TodoEditorState extends State<TodoEditor> {
     );
   }
 
-  Future<bool> _onWillPop() async {
-    _todoBloc.dispatch(UnloadTodo());
-
-    return true;
-  }
-
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: _onWillPop,
-      child: Scaffold(
-        appBar: _buildAppBar(),
-        floatingActionButton: _buildFloatingActionButton(),
-        body: Container(
-          padding: EdgeInsets.all(10.0),
-          child: Center(
-            child: _buildForm(),
-          ),
+    return Scaffold(
+      appBar: _buildAppBar(),
+      floatingActionButton: _buildFloatingActionButton(),
+      body: Container(
+        padding: EdgeInsets.all(10.0),
+        child: Center(
+          child: _buildForm(),
         ),
       ),
     );

@@ -24,7 +24,6 @@ class _TodoEditorPageState extends State<TodoEditorPage> {
     super.initState();
 
     _todoBloc = BlocProvider.of<TodoBloc>(context);
-    _todoBloc.dispatch(FetchTodo(id: widget.todoId));
   }
 
   @override

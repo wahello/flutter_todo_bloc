@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
+import 'package:equatable/equatable.dart';
+
 import 'package:flutter_todo_bloc/models/priority.dart';
 
-class Todo {
+class Todo extends Equatable {
   final String id;
   final String title;
   final String content;
@@ -17,7 +19,7 @@ class Todo {
     this.priority = Priority.Low,
     this.isDone = false,
     @required this.userId,
-  });
+  }) : super([id]);
 
   Todo copyWith({
     String id,

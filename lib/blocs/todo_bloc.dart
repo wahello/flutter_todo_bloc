@@ -37,8 +37,6 @@ class FetchTodo extends TodoEvent {
   String toString() => 'FetchTodo { id: $id }';
 }
 
-class UnloadTodo extends TodoEvent {}
-
 // #endregion
 
 // #region States
@@ -55,7 +53,11 @@ class TodosLoaded extends TodoState {
 
   TodosLoaded({
     @required this.todos,
-  }) : assert(todos != null);
+  })  : assert(todos != null),
+        super(todos);
+
+  @override
+  String toString() => 'TodosLoaded {todos: $todos}';
 }
 
 class TodoLoading extends TodoState {}
@@ -65,7 +67,11 @@ class TodoLoaded extends TodoState {
 
   TodoLoaded({
     @required this.todo,
-  }) : assert(todo != null);
+  })  : assert(todo != null),
+        super([todo]);
+
+  @override
+  String toString() => 'TodoLoaded {todo: $todo}';
 }
 
 class TodoError extends TodoState {
@@ -77,10 +83,8 @@ class TodoError extends TodoState {
         super([error]);
 
   @override
-  String toString() => 'LoginFailure {error: $error}';
+  String toString() => 'TodoError {error: $error}';
 }
-
-class TodoUnloaded extends TodoState {}
 // #endregion
 
 class TodoBloc extends Bloc<TodoEvent, TodoState> {
@@ -122,12 +126,8 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
       }
     }
 
-    if (event is UnloadTodo) {
-      yield TodoUnloaded();
-    }
-
     if (event is FilterTodos) {
-      final List<Todo> todos = await todoRepository.filterTodos(event.filter);
+      final List<Todo> todos = todoRepository.filterTodos(event.filter);
 
       yield TodosLoaded(todos: todos);
     }
