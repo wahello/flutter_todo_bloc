@@ -11,6 +11,8 @@ abstract class TodoEvent extends Equatable {
   TodoEvent([List props = const []]) : super(props);
 }
 
+class ClearTodos extends TodoEvent {}
+
 class FetchTodos extends TodoEvent {}
 
 class FilterTodos extends TodoEvent {
@@ -105,7 +107,9 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     TodoState currentState,
     TodoEvent event,
   ) async* {
-    if (event is FetchTodos) {
+    if (event is ClearTodos) {
+      yield TodosEmpty();
+    } else if (event is FetchTodos) {
       yield TodosLoading();
 
       try {
@@ -115,9 +119,7 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
       } catch (error) {
         yield TodoError(error: error.toString());
       }
-    }
-
-    if (event is FetchTodo) {
+    } else if (event is FetchTodo) {
       yield TodoLoading();
 
       try {
@@ -127,9 +129,7 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
       } catch (error) {
         yield TodoError(error: error.toString());
       }
-    }
-
-    if (event is FilterTodos) {
+    } else if (event is FilterTodos) {
       final List<Todo> todos = todoRepository.filterTodos(event.filter);
 
       yield TodosLoaded(todos: todos, filter: event.filter);
