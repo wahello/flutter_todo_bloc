@@ -88,4 +88,13 @@ class TodoRepository {
 
     return filterTodos(filter);
   }
+
+  Future<List<Todo>> deleteTodo(String id) async {
+    final User user = await userRepository.getUser();
+    await firebaseProvider.deleteTodo(user, id);
+
+    todos = todos.where((todo) => todo.id != id).toList();
+
+    return filterTodos(filter);
+  }
 }

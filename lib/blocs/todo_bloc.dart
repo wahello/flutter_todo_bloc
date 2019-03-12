@@ -69,6 +69,14 @@ class UpdateTodo extends TodoEvent {
     this.isDone = false,
   }) : super([id, title, content, priority, isDone]);
 }
+
+class DeleteTodo extends TodoEvent {
+  final String id;
+
+  DeleteTodo({
+    @required this.id,
+  }) : super([id]);
+}
 // #endregion
 
 // #region States
@@ -185,6 +193,15 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
         event.priority,
         event.isDone,
       );
+
+      yield TodosLoaded(
+        todos: todos,
+        filter: todoRepository.filter,
+      );
+    } else if (event is DeleteTodo) {
+      yield TodoLoading();
+
+      final List<Todo> todos = await todoRepository.deleteTodo(event.id);
 
       yield TodosLoaded(
         todos: todos,

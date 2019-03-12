@@ -172,4 +172,17 @@ class FirebaseProvider {
 
     return todo;
   }
+
+  Future deleteTodo(User user, String id) async {
+    final http.Response response = await http
+        .delete('${Configure.FirebaseUrl}/todos/$id.json?auth=${user.token}');
+
+    if (response.statusCode != 200 && response.statusCode != 201) {
+      // if (response.statusCode == 401) {
+      // TODO: Handle refresh token
+      // }
+
+      throw Exception('Response status code: ${response.statusCode}');
+    }
+  }
 }
