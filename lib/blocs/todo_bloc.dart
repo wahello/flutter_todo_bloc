@@ -55,9 +55,19 @@ class CreateTodo extends TodoEvent {
 }
 
 class UpdateTodo extends TodoEvent {
-  final Todo todo;
+  final String id;
+  final String title;
+  final String content;
+  final Priority priority;
+  final bool isDone;
 
-  UpdateTodo({@required this.todo}) : super([todo]);
+  UpdateTodo({
+    @required this.id,
+    @required this.title,
+    this.content,
+    this.priority = Priority.Low,
+    this.isDone = false,
+  }) : super([id, title, content, priority, isDone]);
 }
 // #endregion
 
@@ -165,7 +175,25 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
         event.isDone,
       );
 
-      yield TodosLoaded(todos: todos);
+      yield TodosLoaded(
+        todos: todos,
+        filter: todoRepository.filter,
+      );
+    } else if (event is UpdateTodo) {
+      yield TodoLoading();
+
+      final List<Todo> todos = await todoRepository.updateTodo(
+        event.id,
+        event.title,
+        event.content,
+        event.priority,
+        event.isDone,
+      );
+
+      yield TodosLoaded(
+        todos: todos,
+        filter: todoRepository.filter,
+      );
     }
   }
 }

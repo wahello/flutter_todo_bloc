@@ -131,17 +131,25 @@ class FirebaseProvider {
     return todo;
   }
 
-  Future updateTodo(User user, Todo todo) async {
+  Future updateTodo(
+    User user,
+    String id,
+    String title,
+    String content,
+    Priority priority,
+    bool isDone,
+  ) async {
     final Map<String, dynamic> formData = {
-      'title': todo.title,
-      'content': todo.content,
-      'priority': todo.priority.toString(),
-      'isDone': todo.isDone,
+      'id': id,
+      'title': title,
+      'content': content,
+      'priority': priority.toString(),
+      'isDone': isDone,
       'userId': user.id,
     };
 
     final http.Response response = await http.put(
-      '${Configure.FirebaseUrl}/todos/${todo.id}.json?auth=${user.token}',
+      '${Configure.FirebaseUrl}/todos/$id.json?auth=${user.token}',
       body: json.encode(formData),
     );
 
@@ -152,5 +160,16 @@ class FirebaseProvider {
 
       throw Exception('Response status code: ${response.statusCode}');
     }
+
+    Todo todo = Todo(
+      id: id,
+      title: title,
+      content: content,
+      priority: priority,
+      isDone: isDone,
+      userId: user.id,
+    );
+
+    return todo;
   }
 }

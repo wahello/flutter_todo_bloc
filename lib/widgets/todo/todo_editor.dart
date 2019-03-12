@@ -98,18 +98,13 @@ class _TodoEditorState extends State<TodoEditor> {
         _formKey.currentState.save();
 
         if (widget.todo != null) {
-          // widget.onUpdateTodo(
-          //   Todo(
-          //     id: widget.todo.id,
-          //     title: _formData['title'],
-          //     content: _formData['content'],
-          //     priority: _formData['priority'],
-          //     isDone: _formData['isDone'],
-          //     userId: widget.user.id,
-          //   ),
-          //   this._onSuccess,
-          //   this._onError,
-          // );
+          _todoBloc.dispatch(UpdateTodo(
+            id: widget.todo.id,
+            title: _formData['title'],
+            content: _formData['content'],
+            priority: _formData['priority'],
+            isDone: _formData['isDone'],
+          ));
         } else {
           _todoBloc.dispatch(CreateTodo(
             title: _formData['title'],

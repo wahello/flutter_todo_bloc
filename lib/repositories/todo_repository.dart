@@ -11,7 +11,9 @@ class TodoRepository {
   final FirebaseProvider firebaseProvider;
   final UserRepository userRepository;
   List<Todo> todos = [];
-  Filter filter = Filter.All;
+  Filter _filter = Filter.All;
+
+  Filter get filter => _filter;
 
   TodoRepository({
     @required this.firebaseProvider,
@@ -34,7 +36,7 @@ class TodoRepository {
   }
 
   List<Todo> filterTodos(Filter newFilter) {
-    filter = newFilter;
+    _filter = newFilter;
 
     if (newFilter == Filter.All) {
       return todos;
@@ -65,12 +67,25 @@ class TodoRepository {
     return filterTodos(filter);
   }
 
-  Future<List<Todo>> updateTodo(Todo todo) async {
+  Future<List<Todo>> updateTodo(
+    String id,
+    String title,
+    String content,
+    Priority priority,
+    bool isDone,
+  ) async {
     final User user = await userRepository.getUser();
-    await firebaseProvider.updateTodo(user, todo);
+    final Todo todo = await firebaseProvider.updateTodo(
+      user,
+      id,
+      title,
+      content,
+      priority,
+      isDone,
+    );
 
-    return todos
-        .map((oldTodo) => oldTodo.id == todo.id ? todo : oldTodo)
-        .toList();
+    todos = todos.map((oldTodo) => oldTodo.id == id ? todo : oldTodo).toList();
+
+    return filterTodos(filter);
   }
 }
