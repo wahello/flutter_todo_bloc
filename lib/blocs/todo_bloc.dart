@@ -107,10 +107,6 @@ class TodoLoaded extends TodoState {
   String toString() => 'TodoLoaded {todo: $todo}';
 }
 
-class TodoCreated extends TodoState {}
-
-class TodoUpdated extends TodoState {}
-
 class TodoError extends TodoState {
   final String error;
 
