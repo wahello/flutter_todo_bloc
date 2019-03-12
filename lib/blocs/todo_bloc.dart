@@ -2,6 +2,7 @@ import 'package:meta/meta.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
+import 'package:flutter_todo_bloc/models/priority.dart';
 import 'package:flutter_todo_bloc/models/filter.dart';
 import 'package:flutter_todo_bloc/models/todo.dart';
 import 'package:flutter_todo_bloc/repositories/todo_repository.dart';
@@ -39,6 +40,25 @@ class FetchTodo extends TodoEvent {
   String toString() => 'FetchTodo { id: $id }';
 }
 
+class CreateTodo extends TodoEvent {
+  final String title;
+  final String content;
+  final Priority priority;
+  final bool isDone;
+
+  CreateTodo({
+    @required this.title,
+    this.content,
+    this.priority = Priority.Low,
+    this.isDone = false,
+  }) : super([title, content, priority, isDone]);
+}
+
+class UpdateTodo extends TodoEvent {
+  final Todo todo;
+
+  UpdateTodo({@required this.todo}) : super([todo]);
+}
 // #endregion
 
 // #region States
@@ -56,9 +76,8 @@ class TodosLoaded extends TodoState {
 
   TodosLoaded({
     @required this.todos,
-    @required this.filter,
+    this.filter = Filter.All,
   })  : assert(todos != null),
-        assert(filter != null),
         super([todos, filter]);
 
   @override
@@ -72,12 +91,15 @@ class TodoLoaded extends TodoState {
 
   TodoLoaded({
     @required this.todo,
-  })  : assert(todo != null),
-        super([todo]);
+  }) : super([todo]);
 
   @override
   String toString() => 'TodoLoaded {todo: $todo}';
 }
+
+class TodoCreated extends TodoState {}
+
+class TodoUpdated extends TodoState {}
 
 class TodoError extends TodoState {
   final String error;
@@ -115,7 +137,7 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
       try {
         final List<Todo> todos = await todoRepository.fetchTodos();
 
-        yield TodosLoaded(todos: todos, filter: Filter.All);
+        yield TodosLoaded(todos: todos);
       } catch (error) {
         yield TodoError(error: error.toString());
       }
@@ -133,6 +155,17 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
       final List<Todo> todos = todoRepository.filterTodos(event.filter);
 
       yield TodosLoaded(todos: todos, filter: event.filter);
+    } else if (event is CreateTodo) {
+      yield TodoLoading();
+
+      final List<Todo> todos = await todoRepository.createTodo(
+        event.title,
+        event.content,
+        event.priority,
+        event.isDone,
+      );
+
+      yield TodosLoaded(todos: todos);
     }
   }
 }

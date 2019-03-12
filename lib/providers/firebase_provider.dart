@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:meta/meta.dart';
 
 import 'package:flutter_todo_bloc/.env.dart';
+import 'package:flutter_todo_bloc/models/priority.dart';
 import 'package:flutter_todo_bloc/models/todo.dart';
 import 'package:flutter_todo_bloc/models/user.dart';
 import 'package:flutter_todo_bloc/widgets/helpers/priority_helper.dart';
@@ -86,5 +87,70 @@ class FirebaseProvider {
     }
 
     return todos;
+  }
+
+  Future<Todo> createTodo(
+    User user,
+    String title,
+    String content,
+    Priority priority,
+    bool isDone,
+  ) async {
+    final Map<String, dynamic> formData = {
+      'title': title,
+      'content': content,
+      'priority': priority.toString(),
+      'isDone': isDone,
+      'userId': user.id,
+    };
+
+    final http.Response response = await http.post(
+      '${Configure.FirebaseUrl}/todos.json?auth=${user.token}',
+      body: json.encode(formData),
+    );
+
+    if (response.statusCode != 200 && response.statusCode != 201) {
+      // if (response.statusCode == 401) {
+      // TODO: Handle refresh token
+      // }
+
+      throw Exception('Response status code: ${response.statusCode}');
+    }
+
+    final Map<String, dynamic> responseData = json.decode(response.body);
+
+    Todo todo = Todo(
+      id: responseData['name'],
+      title: title,
+      content: content,
+      priority: priority,
+      isDone: isDone,
+      userId: user.id,
+    );
+
+    return todo;
+  }
+
+  Future updateTodo(User user, Todo todo) async {
+    final Map<String, dynamic> formData = {
+      'title': todo.title,
+      'content': todo.content,
+      'priority': todo.priority.toString(),
+      'isDone': todo.isDone,
+      'userId': user.id,
+    };
+
+    final http.Response response = await http.put(
+      '${Configure.FirebaseUrl}/todos/${todo.id}.json?auth=${user.token}',
+      body: json.encode(formData),
+    );
+
+    if (response.statusCode != 200 && response.statusCode != 201) {
+      // if (response.statusCode == 401) {
+      // TODO: Handle refresh token
+      // }
+
+      throw Exception('Response status code: ${response.statusCode}');
+    }
   }
 }

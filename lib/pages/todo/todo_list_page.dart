@@ -145,6 +145,8 @@ class _TodoListPageState extends State<TodoListPage> {
     return FloatingActionButton(
       child: Icon(Icons.add),
       onPressed: () {
+        _todoBloc.dispatch(FetchTodo(id: '-1'));
+
         Navigator.pushNamed(context, '/editor');
       },
     );

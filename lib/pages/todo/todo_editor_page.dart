@@ -46,6 +46,13 @@ class _TodoEditorPageState extends State<TodoEditorPage> {
           stack.children.add(LoadingModal());
         }
 
+        if (state is TodosLoaded) {
+          Future.delayed(
+            Duration.zero,
+            () => Navigator.pop(context),
+          );
+        }
+
         if (state is TodoError) {
           Future.delayed(
             Duration.zero,
