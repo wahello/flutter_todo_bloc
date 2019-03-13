@@ -1,16 +1,18 @@
 import 'dart:async';
 
 import 'package:meta/meta.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:flutter_todo_bloc/models/user.dart';
 import 'package:flutter_todo_bloc/providers/firebase_provider.dart';
+import 'package:flutter_todo_bloc/providers/shared_preferences_provider.dart';
 
 class UserRepository {
   final FirebaseProvider firebaseProvider;
+  final SharedPreferencesProvider sharedPreferencesProvider;
 
   UserRepository({
     @required this.firebaseProvider,
+    @required this.sharedPreferencesProvider,
   }) : assert(firebaseProvider != null);
 
   Future<User> authenticate({
@@ -22,37 +24,22 @@ class UserRepository {
     return user;
   }
 
-  Future<void> persistUserData(User user) async {
-    final prefs = await SharedPreferences.getInstance();
-
-    prefs.setString('userId', user.id);
-    prefs.setString('email', user.email);
-    prefs.setString('token', user.token);
-    prefs.setString('refreshToken', user.refreshToken);
-    prefs.setString('expiryTime', user.expiryTime);
+  void saveUser(User user) {
+    sharedPreferencesProvider.saveUser(user);
   }
 
-  Future<User> getUser() async {
-    final prefs = await SharedPreferences.getInstance();
-
-    final User user = User(
-      id: prefs.get('userId'),
-      email: prefs.get('email'),
-      token: prefs.get('token'),
-      refreshToken: prefs.get('refreshToken'),
-      expiryTime: prefs.get('expiryTime'),
-    );
+  Future<User> loadUser() async {
+    final user = await sharedPreferencesProvider.loadUser();
 
     return user;
   }
 
-  Future<void> clearData() async {
-    final prefs = await SharedPreferences.getInstance();
-    prefs.clear();
+  void clearData() {
+    sharedPreferencesProvider.clear();
   }
 
   Future<bool> isAuthenticated() async {
-    final user = await getUser();
+    final user = await loadUser();
 
     return user.id != null;
   }

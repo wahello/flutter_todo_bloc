@@ -240,6 +240,8 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
       todos: todos,
       filter: todoRepository.filter,
     );
+
+    todoRepository.removeTodoFromFirebase(event.id);
   }
 }
 

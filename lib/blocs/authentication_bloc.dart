@@ -73,7 +73,7 @@ class AuthenticationBloc
   }
 
   Stream<AuthenticationState> _mapLoggedInToState(LoggedIn event) async* {
-    userRepository.persistUserData(event.user);
+    userRepository.saveUser(event.user);
 
     yield AuthenticationAuthenticated();
   }

@@ -9,6 +9,7 @@ import 'package:flutter_todo_bloc/pages/todo/todo_list_page.dart';
 import 'package:flutter_todo_bloc/pages/splash/splash_page.dart';
 import 'package:flutter_todo_bloc/pages/todo/todo_editor_page.dart';
 import 'package:flutter_todo_bloc/providers/firebase_provider.dart';
+import 'package:flutter_todo_bloc/providers/shared_preferences_provider.dart';
 import 'package:flutter_todo_bloc/repositories/user_repository.dart';
 import 'package:flutter_todo_bloc/repositories/todo_repository.dart';
 import 'package:flutter_todo_bloc/blocs/authentication_bloc.dart';
@@ -28,8 +29,12 @@ void main() {
     client: http.Client(),
   );
 
+  final SharedPreferencesProvider sharedPreferencesProvider =
+      SharedPreferencesProvider();
+
   final UserRepository userRepository = UserRepository(
     firebaseProvider: firebaseProvider,
+    sharedPreferencesProvider: sharedPreferencesProvider,
   );
 
   final TodoRepository todoRepository = TodoRepository(

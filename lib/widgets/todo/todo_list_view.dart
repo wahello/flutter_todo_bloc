@@ -61,7 +61,9 @@ class TodoListView extends StatelessWidget {
 
         return Dismissible(
           key: Key(todo.id),
-          onDismissed: (DismissDirection direction) {},
+          onDismissed: (DismissDirection direction) {
+            todoBloc.dispatch(DeleteTodo(id: todo.id));
+          },
           child: TodoCard(
             todo: todo,
             onTodoSelected: (todo) => this.onTodoSelected(context, todo),

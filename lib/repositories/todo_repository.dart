@@ -22,7 +22,7 @@ class TodoRepository {
         assert(userRepository != null);
 
   Future<List<Todo>> fetchTodos() async {
-    final User user = await userRepository.getUser();
+    final User user = await userRepository.loadUser();
     todos = await firebaseProvider.fetchTodos(user);
 
     return todos;
@@ -53,7 +53,7 @@ class TodoRepository {
     Priority priority,
     bool isDone,
   ) async {
-    final User user = await userRepository.getUser();
+    final User user = await userRepository.loadUser();
     final Todo todo = await firebaseProvider.createTodo(
       user,
       title,
@@ -74,7 +74,7 @@ class TodoRepository {
     Priority priority,
     bool isDone,
   ) async {
-    final User user = await userRepository.getUser();
+    final User user = await userRepository.loadUser();
     final Todo todo = await firebaseProvider.updateTodo(
       user,
       id,
@@ -90,11 +90,13 @@ class TodoRepository {
   }
 
   Future<List<Todo>> deleteTodo(String id) async {
-    final User user = await userRepository.getUser();
-    await firebaseProvider.deleteTodo(user, id);
-
     todos = todos.where((todo) => todo.id != id).toList();
 
     return filterTodos(filter);
+  }
+
+  void removeTodoFromFirebase(String id) async {
+    final User user = await userRepository.loadUser();
+    await firebaseProvider.deleteTodo(user, id);
   }
 }
