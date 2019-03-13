@@ -128,6 +128,7 @@ class TodoError extends TodoState {
 }
 // #endregion
 
+// #region Bloc
 class TodoBloc extends Bloc<TodoEvent, TodoState> {
   final TodoRepository todoRepository;
 
@@ -144,69 +145,102 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     TodoEvent event,
   ) async* {
     if (event is ClearTodos) {
-      yield TodosEmpty();
+      _mapClearTodosToState();
     } else if (event is FetchTodos) {
-      yield TodosLoading();
-
-      try {
-        final List<Todo> todos = await todoRepository.fetchTodos();
-
-        yield TodosLoaded(todos: todos);
-      } catch (error) {
-        yield TodoError(error: error.toString());
-      }
+      _mapFetchTodosToState();
     } else if (event is FetchTodo) {
-      yield TodoLoading();
-
-      try {
-        final Todo todo = todoRepository.fetchTodo(event.id);
-
-        yield TodoLoaded(todo: todo);
-      } catch (error) {
-        yield TodoError(error: error.toString());
-      }
+      _mapFetchTodoToState(event);
     } else if (event is FilterTodos) {
-      final List<Todo> todos = todoRepository.filterTodos(event.filter);
-
-      yield TodosLoaded(todos: todos, filter: event.filter);
+      _mapFilterTodosToState(event);
     } else if (event is CreateTodo) {
-      yield TodoLoading();
-
-      final List<Todo> todos = await todoRepository.createTodo(
-        event.title,
-        event.content,
-        event.priority,
-        event.isDone,
-      );
-
-      yield TodosLoaded(
-        todos: todos,
-        filter: todoRepository.filter,
-      );
+      _mapCreateTodoToState(event);
     } else if (event is UpdateTodo) {
-      yield TodoLoading();
-
-      final List<Todo> todos = await todoRepository.updateTodo(
-        event.id,
-        event.title,
-        event.content,
-        event.priority,
-        event.isDone,
-      );
-
-      yield TodosLoaded(
-        todos: todos,
-        filter: todoRepository.filter,
-      );
+      _mapUpdateTodoToState(event);
     } else if (event is DeleteTodo) {
-      yield TodoLoading();
-
-      final List<Todo> todos = await todoRepository.deleteTodo(event.id);
-
-      yield TodosLoaded(
-        todos: todos,
-        filter: todoRepository.filter,
-      );
+      _mapDeleteTodoToState(event);
     }
   }
+
+  Stream<TodoState> _mapClearTodosToState() async* {
+    yield TodosEmpty();
+  }
+
+  Stream<TodoState> _mapFetchTodosToState() async* {
+    yield TodosLoading();
+
+    try {
+      final List<Todo> todos = await todoRepository.fetchTodos();
+
+      yield TodosLoaded(todos: todos);
+    } catch (error) {
+      yield TodoError(error: error.toString());
+    }
+  }
+
+  Stream<TodoState> _mapFetchTodoToState(FetchTodo event) async* {
+    yield TodoLoading();
+
+    try {
+      final Todo todo = todoRepository.fetchTodo(event.id);
+
+      yield TodoLoaded(todo: todo);
+    } catch (error) {
+      yield TodoError(error: error.toString());
+    }
+  }
+
+  Stream<TodoState> _mapFilterTodosToState(FilterTodos event) async* {
+    final List<Todo> todos = todoRepository.filterTodos(event.filter);
+
+    yield TodosLoaded(
+      todos: todos,
+      filter: event.filter,
+    );
+  }
+
+  Stream<TodoState> _mapCreateTodoToState(CreateTodo event) async* {
+    yield TodoLoading();
+
+    final List<Todo> todos = await todoRepository.createTodo(
+      event.title,
+      event.content,
+      event.priority,
+      event.isDone,
+    );
+
+    yield TodosLoaded(
+      todos: todos,
+      filter: todoRepository.filter,
+    );
+  }
+
+  Stream<TodoState> _mapUpdateTodoToState(UpdateTodo event) async* {
+    yield TodoLoading();
+
+    final List<Todo> todos = await todoRepository.updateTodo(
+      event.id,
+      event.title,
+      event.content,
+      event.priority,
+      event.isDone,
+    );
+
+    yield TodosLoaded(
+      todos: todos,
+      filter: todoRepository.filter,
+    );
+  }
+
+  Stream<TodoState> _mapDeleteTodoToState(DeleteTodo event) async* {
+    yield TodosLoading();
+
+    final List<Todo> todos = await todoRepository.deleteTodo(event.id);
+
+    yield TodosLoaded(
+      todos: todos,
+      filter: todoRepository.filter,
+    );
+  }
 }
+
+// #endregion

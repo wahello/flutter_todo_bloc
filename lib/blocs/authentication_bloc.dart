@@ -54,26 +54,34 @@ class AuthenticationBloc
     AuthenticationEvent event,
   ) async* {
     if (event is AppStarted) {
-      final bool isAuthenticated = await userRepository.isAuthenticated();
-
-      if (isAuthenticated) {
-        yield AuthenticationAuthenticated();
-      } else {
-        yield AuthenticationUnauthenticated();
-      }
+      _mapAppStartedToState();
+    } else if (event is LoggedIn) {
+      _mapLoggedInToState(event);
+    } else if (event is LoggedOut) {
+      _mapLoggedOutToState();
     }
+  }
 
-    if (event is LoggedIn) {
-      userRepository.persistUserData(event.user);
+  Stream<AuthenticationState> _mapAppStartedToState() async* {
+    final bool isAuthenticated = await userRepository.isAuthenticated();
 
+    if (isAuthenticated) {
       yield AuthenticationAuthenticated();
-    }
-
-    if (event is LoggedOut) {
-      userRepository.clearData();
-
+    } else {
       yield AuthenticationUnauthenticated();
     }
+  }
+
+  Stream<AuthenticationState> _mapLoggedInToState(LoggedIn event) async* {
+    userRepository.persistUserData(event.user);
+
+    yield AuthenticationAuthenticated();
+  }
+
+  Stream<AuthenticationState> _mapLoggedOutToState() async* {
+    userRepository.clearData();
+
+    yield AuthenticationUnauthenticated();
   }
 }
 // #endregion

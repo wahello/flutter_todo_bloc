@@ -67,20 +67,24 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     LoginEvent event,
   ) async* {
     if (event is LoginStarted) {
-      yield LoginInProgress();
+      _mapLoginStartedToState(event);
+    }
+  }
 
-      try {
-        final user = await userRepository.authenticate(
-          email: event.email,
-          password: event.password,
-        );
+  Stream<LoginState> _mapLoginStartedToState(LoginStarted event) async* {
+    yield LoginInProgress();
 
-        authenticationBloc.dispatch(LoggedIn(user: user));
+    try {
+      final user = await userRepository.authenticate(
+        email: event.email,
+        password: event.password,
+      );
 
-        yield LoginInitial();
-      } catch (error) {
-        yield LoginError(error: error.toString());
-      }
+      authenticationBloc.dispatch(LoggedIn(user: user));
+
+      yield LoginInitial();
+    } catch (error) {
+      yield LoginError(error: error.toString());
     }
   }
 }
