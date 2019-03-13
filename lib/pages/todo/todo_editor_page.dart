@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:flutter_todo_bloc/.env.dart';
+import 'package:flutter_todo_bloc/blocs/authentication_bloc.dart';
 import 'package:flutter_todo_bloc/blocs/todo_bloc.dart';
 import 'package:flutter_todo_bloc/models/priority.dart';
 import 'package:flutter_todo_bloc/models/todo.dart';
@@ -31,6 +32,7 @@ class _TodoEditorPageState extends State<TodoEditorPage> {
   };
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
+  AuthenticationBloc _authenticationBloc;
   TodoBloc _todoBloc;
   Todo _todo;
 
@@ -38,6 +40,7 @@ class _TodoEditorPageState extends State<TodoEditorPage> {
   void initState() {
     super.initState();
 
+    _authenticationBloc = BlocProvider.of<AuthenticationBloc>(context);
     _todoBloc = BlocProvider.of<TodoBloc>(context);
   }
 
@@ -59,7 +62,8 @@ class _TodoEditorPageState extends State<TodoEditorPage> {
                 if (confirm) {
                   Navigator.pop(context);
 
-                  // widget.onLogOut();
+                  _todoBloc.dispatch(ClearTodos());
+                  _authenticationBloc.dispatch(LoggedOut());
                 }
                 break;
             }
