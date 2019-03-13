@@ -44,7 +44,7 @@ class _TodoListPageState extends State<TodoListPage> {
 
         Stack stack = Stack(
           children: <Widget>[
-            _buildPageContent(context),
+            _buildPageContent(),
           ],
         );
 
@@ -64,7 +64,7 @@ class _TodoListPageState extends State<TodoListPage> {
     );
   }
 
-  Widget _buildAppBar(BuildContext context) {
+  Widget _buildAppBar() {
     return AppBar(
       title: Text(Configure.AppName),
       backgroundColor: Colors.blue,
@@ -134,10 +134,7 @@ class _TodoListPageState extends State<TodoListPage> {
     );
   }
 
-  Widget _buildFloatingActionButton(
-    BuildContext context,
-    bool isShortcutsEnabled,
-  ) {
+  Widget _buildFloatingActionButton(bool isShortcutsEnabled) {
     // if (isShortcutsEnabled) {
     //   return ShortcutsEnabledTodoFab();
     // }
@@ -152,10 +149,10 @@ class _TodoListPageState extends State<TodoListPage> {
     );
   }
 
-  Widget _buildPageContent(BuildContext context) {
+  Widget _buildPageContent() {
     return Scaffold(
-      appBar: _buildAppBar(context),
-      floatingActionButton: _buildFloatingActionButton(context, false),
+      appBar: _buildAppBar(),
+      floatingActionButton: _buildFloatingActionButton(false),
       body: TodoListView(
         todoBloc: _todoBloc,
         todos: todos,
