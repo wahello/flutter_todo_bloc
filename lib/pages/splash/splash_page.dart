@@ -8,7 +8,7 @@ class SplashPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Color.fromARGB(16, 0, 0, 0),
+      color: Colors.white,
       child: Center(
         child: SvgPicture.asset(
           'assets/todo_list.svg',

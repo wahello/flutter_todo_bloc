@@ -145,19 +145,19 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     TodoEvent event,
   ) async* {
     if (event is ClearTodos) {
-      _mapClearTodosToState();
+      yield* _mapClearTodosToState();
     } else if (event is FetchTodos) {
-      _mapFetchTodosToState();
+      yield* _mapFetchTodosToState();
     } else if (event is FetchTodo) {
-      _mapFetchTodoToState(event);
+      yield* _mapFetchTodoToState(event);
     } else if (event is FilterTodos) {
-      _mapFilterTodosToState(event);
+      yield* _mapFilterTodosToState(event);
     } else if (event is CreateTodo) {
-      _mapCreateTodoToState(event);
+      yield* _mapCreateTodoToState(event);
     } else if (event is UpdateTodo) {
-      _mapUpdateTodoToState(event);
+      yield* _mapUpdateTodoToState(event);
     } else if (event is DeleteTodo) {
-      _mapDeleteTodoToState(event);
+      yield* _mapDeleteTodoToState(event);
     }
   }
 

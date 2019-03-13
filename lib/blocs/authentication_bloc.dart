@@ -54,11 +54,11 @@ class AuthenticationBloc
     AuthenticationEvent event,
   ) async* {
     if (event is AppStarted) {
-      _mapAppStartedToState();
+      yield* _mapAppStartedToState();
     } else if (event is LoggedIn) {
-      _mapLoggedInToState(event);
+      yield* _mapLoggedInToState(event);
     } else if (event is LoggedOut) {
-      _mapLoggedOutToState();
+      yield* _mapLoggedOutToState();
     }
   }
 
