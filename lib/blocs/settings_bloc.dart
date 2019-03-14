@@ -11,6 +11,10 @@ abstract class SettingsEvent extends Equatable {
 }
 
 class LoadSettings extends SettingsEvent {}
+
+class ToggleDarkThemeUsed extends SettingsEvent {}
+
+class ToggleShortcutsEnabled extends SettingsEvent {}
 // #endregion
 
 // #region States
@@ -49,6 +53,13 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     if (event is LoadSettings) {
       yield SettingsLoading();
 
+      final settings = await settingsRepository.loadSettings();
+
+      yield SettingsLoaded(settings: settings);
+    } else if (event is ToggleDarkThemeUsed) {
+      yield SettingsLoading();
+
+      settingsRepository.toggleDarkThemeUsedSetting();
       final settings = await settingsRepository.loadSettings();
 
       yield SettingsLoaded(settings: settings);

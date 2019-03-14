@@ -13,4 +13,12 @@ class SettingsRepository {
   Future<Settings> loadSettings() async {
     return await sharedPreferencesProvider.loadSettings();
   }
+
+  void toggleShortcutsEnabledSetting() async {
+    sharedPreferencesProvider.toggleShortcutsEnabledSetting();
+  }
+
+  void toggleDarkThemeUsedSetting() async {
+    sharedPreferencesProvider.toggleDarkThemeUsedSetting();
+  }
 }

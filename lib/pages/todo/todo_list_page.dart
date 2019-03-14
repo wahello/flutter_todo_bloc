@@ -105,7 +105,6 @@ class _TodoListPageState extends State<TodoListPage> {
                 bool confirm = await ConfirmDialog.show(context);
 
                 if (confirm) {
-                  _todoBloc.dispatch(ClearTodos());
                   _authenticationBloc.dispatch(LoggedOut());
                 }
                 break;

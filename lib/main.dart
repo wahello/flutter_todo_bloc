@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_todo_bloc/.env.dart';
 import 'package:flutter_todo_bloc/pages/auth/auth_page.dart';
 import 'package:flutter_todo_bloc/pages/todo/todo_list_page.dart';
+import 'package:flutter_todo_bloc/pages/settings/settings_page.dart';
 import 'package:flutter_todo_bloc/pages/splash/splash_page.dart';
 import 'package:flutter_todo_bloc/pages/todo/todo_editor_page.dart';
 import 'package:flutter_todo_bloc/providers/firebase_provider.dart';
@@ -145,6 +146,9 @@ class _AppState extends State<App> {
                   }
                 },
               ),
+              routes: {
+                '/settings': (BuildContext context) => SettingsPage(),
+              },
               onGenerateRoute: (RouteSettings settings) {
                 final List<String> pathElements = settings.name.split('/');
 

@@ -62,7 +62,6 @@ class _TodoEditorPageState extends State<TodoEditorPage> {
                 if (confirm) {
                   Navigator.pop(context);
 
-                  _todoBloc.dispatch(ClearTodos());
                   _authenticationBloc.dispatch(LoggedOut());
                 }
                 break;
