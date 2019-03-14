@@ -13,7 +13,8 @@ class UserRepository {
   UserRepository({
     @required this.firebaseProvider,
     @required this.sharedPreferencesProvider,
-  }) : assert(firebaseProvider != null);
+  })  : assert(firebaseProvider != null),
+        assert(sharedPreferencesProvider != null);
 
   Future<User> authenticate({
     @required String email,

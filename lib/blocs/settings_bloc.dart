@@ -1,5 +1,9 @@
 import 'package:equatable/equatable.dart';
 import 'package:bloc/bloc.dart';
+import 'package:meta/meta.dart';
+
+import 'package:flutter_todo_bloc/models/settings.dart';
+import 'package:flutter_todo_bloc/repositories/settings_repository.dart';
 
 // #region Events
 abstract class SettingsEvent extends Equatable {
@@ -18,10 +22,22 @@ class SettingsUnloaded extends SettingsState {}
 
 class SettingsLoading extends SettingsState {}
 
-class SettingsLoaded extends SettingsState {}
+class SettingsLoaded extends SettingsState {
+  final Settings settings;
+
+  SettingsLoaded({@required this.settings})
+      : assert(settings != null),
+        super([settings]);
+}
 // #endregion
 
 class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
+  final SettingsRepository settingsRepository;
+
+  SettingsBloc({
+    @required this.settingsRepository,
+  }) : assert(settingsRepository != null);
+
   @override
   SettingsState get initialState => SettingsUnloaded();
 
@@ -33,7 +49,9 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     if (event is LoadSettings) {
       yield SettingsLoading();
 
-      yield SettingsLoaded();
+      final settings = await settingsRepository.loadSettings();
+
+      yield SettingsLoaded(settings: settings);
     }
   }
 }
