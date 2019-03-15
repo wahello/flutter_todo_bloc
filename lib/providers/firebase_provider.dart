@@ -110,9 +110,9 @@ class FirebaseProvider {
     );
 
     if (response.statusCode != 200 && response.statusCode != 201) {
-      // if (response.statusCode == 401) {
-      // TODO: Handle refresh token
-      // }
+      if (response.statusCode == 401) {
+        throw Exception('Token is expired');
+      }
 
       throw Exception('Response status code: ${response.statusCode}');
     }
@@ -154,9 +154,9 @@ class FirebaseProvider {
     );
 
     if (response.statusCode != 200 && response.statusCode != 201) {
-      // if (response.statusCode == 401) {
-      // TODO: Handle refresh token
-      // }
+      if (response.statusCode == 401) {
+        throw Exception('Token is expired');
+      }
 
       throw Exception('Response status code: ${response.statusCode}');
     }
@@ -178,9 +178,9 @@ class FirebaseProvider {
         .delete('${Configure.FirebaseUrl}/todos/$id.json?auth=${user.token}');
 
     if (response.statusCode != 200 && response.statusCode != 201) {
-      // if (response.statusCode == 401) {
-      // TODO: Handle refresh token
-      // }
+      if (response.statusCode == 401) {
+        throw Exception('Token is expired');
+      }
 
       throw Exception('Response status code: ${response.statusCode}');
     }
