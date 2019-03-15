@@ -60,9 +60,7 @@ class _TodoEditorPageState extends State<TodoEditorPage> {
                 bool confirm = await ConfirmDialog.show(context);
 
                 if (confirm) {
-                  Navigator.pop(context);
-
-                  _authenticationBloc.dispatch(LoggedOut());
+                  _logOut();
                 }
                 break;
             }
@@ -238,12 +236,29 @@ class _TodoEditorPageState extends State<TodoEditorPage> {
         if (state is TodoError) {
           Future.delayed(
             Duration.zero,
-            () => MessageDialog.show(context, message: state.error),
+            () {
+              final bool requireLogout = state.error == 'Token is expired';
+
+              MessageDialog.show(context,
+                  message: requireLogout
+                      ? 'Token is expired. You need to re-login.'
+                      : state.error);
+
+              if (requireLogout) {
+                _logOut();
+              }
+            },
           );
         }
 
         return stack;
       },
     );
+  }
+
+  void _logOut() {
+    Navigator.pop(context);
+
+    _authenticationBloc.dispatch(LoggedOut());
   }
 }

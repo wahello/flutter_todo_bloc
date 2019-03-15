@@ -55,7 +55,18 @@ class _TodoListPageState extends State<TodoListPage> {
         if (state is TodoError) {
           Future.delayed(
             Duration.zero,
-            () => MessageDialog.show(context, message: state.error),
+            () {
+              final bool requireLogout = state.error == 'Token is expired';
+
+              MessageDialog.show(context,
+                  message: requireLogout
+                      ? 'Token is expired. You need to re-login.'
+                      : state.error);
+
+              if (requireLogout) {
+                _logOut();
+              }
+            },
           );
         }
 
@@ -105,7 +116,7 @@ class _TodoListPageState extends State<TodoListPage> {
                 bool confirm = await ConfirmDialog.show(context);
 
                 if (confirm) {
-                  _authenticationBloc.dispatch(LoggedOut());
+                  _logOut();
                 }
                 break;
             }
@@ -157,5 +168,9 @@ class _TodoListPageState extends State<TodoListPage> {
         todos: todos,
       ),
     );
+  }
+
+  void _logOut() {
+    _authenticationBloc.dispatch(LoggedOut());
   }
 }

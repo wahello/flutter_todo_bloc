@@ -61,9 +61,9 @@ class FirebaseProvider {
         '${Configure.FirebaseUrl}/todos.json?auth=${user.token}&orderBy="userId"&equalTo="${user.id}"');
 
     if (response.statusCode != 200 && response.statusCode != 201) {
-      // if (response.statusCode == 401) {
-      // TODO: Handle refresh token
-      // }
+      if (response.statusCode == 401) {
+        throw Exception('Token is expired');
+      }
 
       throw Exception('Response status code: ${response.statusCode}');
     }
