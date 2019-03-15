@@ -201,47 +201,59 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
   Stream<TodoState> _mapCreateTodoToState(CreateTodo event) async* {
     yield TodoLoading();
 
-    final List<Todo> todos = await todoRepository.createTodo(
-      event.title,
-      event.content,
-      event.priority,
-      event.isDone,
-    );
+    try {
+      final List<Todo> todos = await todoRepository.createTodo(
+        event.title,
+        event.content,
+        event.priority,
+        event.isDone,
+      );
 
-    yield TodosLoaded(
-      todos: todos,
-      filter: todoRepository.filter,
-    );
+      yield TodosLoaded(
+        todos: todos,
+        filter: todoRepository.filter,
+      );
+    } catch (error) {
+      yield TodoError(error: error.toString());
+    }
   }
 
   Stream<TodoState> _mapUpdateTodoToState(UpdateTodo event) async* {
     yield TodoLoading();
 
-    final List<Todo> todos = await todoRepository.updateTodo(
-      event.id,
-      event.title,
-      event.content,
-      event.priority,
-      event.isDone,
-    );
+    try {
+      final List<Todo> todos = await todoRepository.updateTodo(
+        event.id,
+        event.title,
+        event.content,
+        event.priority,
+        event.isDone,
+      );
 
-    yield TodosLoaded(
-      todos: todos,
-      filter: todoRepository.filter,
-    );
+      yield TodosLoaded(
+        todos: todos,
+        filter: todoRepository.filter,
+      );
+    } catch (error) {
+      yield TodoError(error: error.toString());
+    }
   }
 
   Stream<TodoState> _mapDeleteTodoToState(DeleteTodo event) async* {
     yield TodosLoading();
 
-    final List<Todo> todos = await todoRepository.deleteTodo(event.id);
+    try {
+      final List<Todo> todos = await todoRepository.deleteTodo(event.id);
 
-    yield TodosLoaded(
-      todos: todos,
-      filter: todoRepository.filter,
-    );
+      yield TodosLoaded(
+        todos: todos,
+        filter: todoRepository.filter,
+      );
 
-    todoRepository.removeTodoFromFirebase(event.id);
+      todoRepository.removeTodoFromFirebase(event.id);
+    } catch (error) {
+      yield TodoError(error: error.toString());
+    }
   }
 }
 

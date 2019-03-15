@@ -25,6 +25,15 @@ class UserRepository {
     return user;
   }
 
+  Future<User> register({
+    @required String email,
+    @required String password,
+  }) async {
+    final user = await firebaseProvider.register(email, password);
+
+    return user;
+  }
+
   void saveUser(User user) {
     sharedPreferencesProvider.saveUser(user);
   }

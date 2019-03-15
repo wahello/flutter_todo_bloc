@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
+import 'package:flutter_todo_bloc/models/user.dart';
 import 'package:flutter_todo_bloc/blocs/authentication_bloc.dart';
 import 'package:flutter_todo_bloc/repositories/user_repository.dart';
 
@@ -44,7 +45,7 @@ class LoginError extends LoginState {
         super([error]);
 
   @override
-  String toString() => 'LoginFailure {error: $error}';
+  String toString() => 'LoginError {error: $error}';
 }
 // #endregion
 
@@ -75,7 +76,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     yield LoginInProgress();
 
     try {
-      final user = await userRepository.authenticate(
+      final User user = await userRepository.authenticate(
         email: event.email,
         password: event.password,
       );

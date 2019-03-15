@@ -56,6 +56,50 @@ class FirebaseProvider {
     throw Exception('Unknown error.');
   }
 
+  Future<User> register(
+    String email,
+    String password,
+  ) async {
+    final Map<String, dynamic> formData = {
+      'email': email,
+      'password': password,
+      'returnSecureToken': true,
+    };
+
+    final http.Response response = await http.post(
+      'https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=${Configure.ApiKey}',
+      body: json.encode(formData),
+      headers: {'Content-Type': 'application/json'},
+    );
+
+    final Map<String, dynamic> responseData = json.decode(response.body);
+
+    if (responseData.containsKey('idToken')) {
+      final DateTime now = DateTime.now();
+      final DateTime expiryTime =
+          now.add(Duration(seconds: int.parse(responseData['expiresIn'])));
+
+      final User user = User(
+          id: responseData['localId'],
+          email: responseData['email'],
+          token: responseData['idToken'],
+          refreshToken: responseData['refreshToken'],
+          expiryTime: expiryTime.toIso8601String());
+
+      return user;
+    } else if (responseData['error']['message'] == 'EMAIL_EXISTS') {
+      throw Exception('Email is already exists.');
+    } else if (responseData['error']['message'] == 'OPERATION_NOT_ALLOWED') {
+      throw Exception('Password sign-in is disabled.');
+    } else if (responseData['error']['message'] ==
+        'TOO_MANY_ATTEMPTS_TRY_LATER') {
+      throw Exception(
+          'We have blocked all requests from this device due to unusual activity. Try again later.');
+    }
+
+    throw Exception('Unknown error.');
+  }
+
   Future<List<Todo>> fetchTodos(User user) async {
     final http.Response response = await http.get(
         '${Configure.FirebaseUrl}/todos.json?auth=${user.token}&orderBy="userId"&equalTo="${user.id}"');
@@ -149,7 +193,7 @@ class FirebaseProvider {
     };
 
     final http.Response response = await http.put(
-      '${Configure.FirebaseUrl}/todos/$id.json?auth=${user.token}',
+      '${Configure.FirebaseUrl}/todos/$id?auth=${user.token}',
       body: json.encode(formData),
     );
 
@@ -173,7 +217,10 @@ class FirebaseProvider {
     return todo;
   }
 
-  Future deleteTodo(User user, String id) async {
+  Future deleteTodo(
+    User user,
+    String id,
+  ) async {
     final http.Response response = await http
         .delete('${Configure.FirebaseUrl}/todos/$id.json?auth=${user.token}');
 
