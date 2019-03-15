@@ -244,6 +244,8 @@ class _TodoEditorPageState extends State<TodoEditorPage> {
                       ? 'Token is expired. You need to re-login.'
                       : state.error);
 
+              _todoBloc.dispatch(TodoInitialized());
+
               if (requireLogout) {
                 _logOut();
               }

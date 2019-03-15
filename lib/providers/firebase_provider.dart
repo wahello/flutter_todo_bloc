@@ -193,7 +193,7 @@ class FirebaseProvider {
     };
 
     final http.Response response = await http.put(
-      '${Configure.FirebaseUrl}/todos/$id?auth=${user.token}',
+      '${Configure.FirebaseUrl}/todos/$id.json?auth=${user.token}',
       body: json.encode(formData),
     );
 

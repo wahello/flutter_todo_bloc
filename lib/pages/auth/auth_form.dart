@@ -79,7 +79,11 @@ class _AuthFormState extends State<AuthForm> {
           if (state is LoginError) {
             Future.delayed(
               Duration.zero,
-              () => MessageDialog.show(context, message: state.error),
+              () {
+                MessageDialog.show(context, message: state.error);
+
+                loginBloc.dispatch(LoginInitialized());
+              },
             );
           }
 

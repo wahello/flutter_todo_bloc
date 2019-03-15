@@ -12,8 +12,6 @@ abstract class TodoEvent extends Equatable {
   TodoEvent([List props = const []]) : super(props);
 }
 
-class ClearTodos extends TodoEvent {}
-
 class FetchTodos extends TodoEvent {}
 
 class FilterTodos extends TodoEvent {
@@ -54,6 +52,8 @@ class CreateTodo extends TodoEvent {
   }) : super([title, content, priority, isDone]);
 }
 
+class TodoInitialized extends TodoEvent {}
+
 class UpdateTodo extends TodoEvent {
   final String id;
   final String title;
@@ -84,7 +84,7 @@ abstract class TodoState extends Equatable {
   TodoState([List props = const []]) : super(props);
 }
 
-class TodosEmpty extends TodoState {}
+class TodosInitial extends TodoState {}
 
 class TodosLoading extends TodoState {}
 
@@ -102,6 +102,18 @@ class TodosLoaded extends TodoState {
   String toString() => 'TodosLoaded {todos: $todos}';
 }
 
+class TodosError extends TodoState {
+  final String error;
+
+  TodosError({
+    @required this.error,
+  })  : assert(error != null),
+        super([error]);
+
+  @override
+  String toString() => 'TodosError {error: $error}';
+}
+
 class TodoLoading extends TodoState {}
 
 class TodoLoaded extends TodoState {
@@ -114,6 +126,8 @@ class TodoLoaded extends TodoState {
   @override
   String toString() => 'TodoLoaded {todo: $todo}';
 }
+
+class TodoInitial extends TodoState {}
 
 class TodoError extends TodoState {
   final String error;
@@ -137,15 +151,15 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
   }) : assert(todoRepository != null);
 
   @override
-  TodoState get initialState => TodosEmpty();
+  TodoState get initialState => TodosInitial();
 
   @override
   Stream<TodoState> mapEventToState(
     TodoState currentState,
     TodoEvent event,
   ) async* {
-    if (event is ClearTodos) {
-      yield* _mapClearTodosToState();
+    if (event is TodoInitialized) {
+      yield TodoInitial();
     } else if (event is FetchTodos) {
       yield* _mapFetchTodosToState();
     } else if (event is FetchTodo) {
@@ -161,10 +175,6 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     }
   }
 
-  Stream<TodoState> _mapClearTodosToState() async* {
-    yield TodosEmpty();
-  }
-
   Stream<TodoState> _mapFetchTodosToState() async* {
     yield TodosLoading();
 
@@ -173,7 +183,7 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
 
       yield TodosLoaded(todos: todos);
     } catch (error) {
-      yield TodoError(error: error.toString());
+      yield TodosError(error: error.toString());
     }
   }
 

@@ -11,6 +11,8 @@ abstract class LoginEvent extends Equatable {
   LoginEvent([List props = const []]) : super(props);
 }
 
+class LoginInitialized extends LoginEvent {}
+
 class LoginStarted extends LoginEvent {
   final String email;
   final String password;
@@ -67,7 +69,9 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     LoginState currentState,
     LoginEvent event,
   ) async* {
-    if (event is LoginStarted) {
+    if (event is LoginInitialized) {
+      yield LoginInitial();
+    } else if (event is LoginStarted) {
       yield* _mapLoginStartedToState(event);
     }
   }

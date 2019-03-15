@@ -52,7 +52,7 @@ class _TodoListPageState extends State<TodoListPage> {
           stack.children.add(LoadingModal());
         }
 
-        if (state is TodoError) {
+        if (state is TodosError) {
           Future.delayed(
             Duration.zero,
             () {

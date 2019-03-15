@@ -1,20 +1,12 @@
 import 'package:flutter/material.dart';
 
-import 'package:flutter_bloc/flutter_bloc.dart';
-
-import 'package:flutter_todo_bloc/.env.dart';
-import 'package:flutter_todo_bloc/blocs/registration_bloc.dart';
-import 'package:flutter_todo_bloc/widgets/helpers/message_dialog.dart';
-import 'package:flutter_todo_bloc/widgets/ui_elements/loading_modal.dart';
 import 'package:flutter_todo_bloc/widgets/ui_elements/rounded_button.dart';
 
 class RegisterForm extends StatefulWidget {
-  final RegistrationBloc registrationBloc;
+  final Function register;
 
-  RegisterForm({
-    Key key,
-    @required this.registrationBloc,
-  })  : assert(registrationBloc != null),
+  RegisterForm({Key key, @required this.register})
+      : assert(register != null),
         super(key: key);
 
   @override
@@ -30,70 +22,22 @@ class _RegisterFormState extends State<RegisterForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _passwordController = TextEditingController();
 
-  RegistrationBloc get registrationBloc => widget.registrationBloc;
-
   @override
   Widget build(BuildContext context) {
-    final double deviceWidth = MediaQuery.of(context).size.width;
-    final double targetWidth = deviceWidth > 550 ? 500 : deviceWidth * 0.85;
-
-    return BlocBuilder<RegistrationEvent, RegistrationState>(
-        bloc: registrationBloc,
-        builder: (BuildContext context, RegistrationState state) {
-          Stack stack = Stack(
-            children: <Widget>[
-              Scaffold(
-                appBar: AppBar(
-                  title: Text(Configure.AppName),
-                ),
-                body: Container(
-                  padding: EdgeInsets.all(10.0),
-                  child: Center(
-                    child: SingleChildScrollView(
-                      child: Container(
-                        width: targetWidth,
-                        child: Form(
-                          key: _formKey,
-                          child: Column(
-                            children: <Widget>[
-                              _buildEmailField(),
-                              _buildPasswordField(),
-                              _buildConfirmPasswordField(),
-                              SizedBox(
-                                height: 20.0,
-                              ),
-                              _buildButtonRow(),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          );
-
-          if (state is RegistrationInProgress) {
-            stack.children.add(LoadingModal());
-          }
-
-          if (state is RegistrationError) {
-            Future.delayed(
-              Duration.zero,
-              () => MessageDialog.show(context, message: state.error),
-            );
-          }
-
-          if (state is RegistrationSuccess) {
-            Future.delayed(
-              Duration.zero,
-              () => Navigator.pop(context),
-            );
-          }
-
-          return stack;
-        });
+    return Form(
+      key: _formKey,
+      child: Column(
+        children: <Widget>[
+          _buildEmailField(),
+          _buildPasswordField(),
+          _buildConfirmPasswordField(),
+          SizedBox(
+            height: 20.0,
+          ),
+          _buildButtonRow(),
+        ],
+      ),
+    );
   }
 
   void _register() async {
@@ -103,10 +47,7 @@ class _RegisterFormState extends State<RegisterForm> {
 
     _formKey.currentState.save();
 
-    registrationBloc.dispatch(RegistrationStarted(
-      email: _formData['email'],
-      password: _formData['password'],
-    ));
+    widget.register(_formData['email'], _formData['password']);
   }
 
   Widget _buildEmailField() {

@@ -11,6 +11,8 @@ abstract class RegistrationEvent extends Equatable {
   RegistrationEvent([List props = const []]) : super(props);
 }
 
+class RegistrationInitialized extends RegistrationEvent {}
+
 class RegistrationStarted extends RegistrationEvent {
   final String email;
   final String password;
@@ -70,7 +72,9 @@ class RegistrationBloc extends Bloc<RegistrationEvent, RegistrationState> {
     RegistrationState currentState,
     RegistrationEvent event,
   ) async* {
-    if (event is RegistrationStarted) {
+    if (event is RegistrationInitialized) {
+      yield RegistrationInitial();
+    } else if (event is RegistrationStarted) {
       yield* _mapRegistrationStartedToState(event);
     }
   }
