@@ -10,13 +10,14 @@ Features:
 
 - Create/edit todo
 - Delete todo by swipping
-- Undo delete
 - Mark done/not done in list
 - Filter todo list by status (all/done/not done)
 - Change theme (light to dark and vice versa) at runtime
-- Enable shortcuts to create todo
 - Login/logout
 - Register new account
+
+![Dark List](dark_list.png?raw=true)
+![Dark Editor](dark_editor.png?raw=true)
 
 To get start, run below command in Terminal
 
