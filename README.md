@@ -1,6 +1,6 @@
 # Flutter Todo BLOC
 
-Yet another Todo app, now using Flutter with BLOC.
+Yet another Todo app, now using Flutter with BLOC ([flutter_bloc](https://pub.dartlang.org/packages/flutter_bloc)).
 
 ## Getting Started
 
