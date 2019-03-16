@@ -203,9 +203,10 @@ class _TodoEditorPageState extends State<TodoEditorPage> {
           _todo = state.todo;
         }
 
-        final form =
-            _todo != null || state is TodoLoaded ? _buildForm(_todo) : null;
-        final floatingActionButton = _todo != null || state is TodoLoaded
+        final form = state is TodoLoaded || state is TodoLoading
+            ? _buildForm(_todo)
+            : null;
+        final floatingActionButton = state is TodoLoaded || state is TodoLoading
             ? _buildFloatingActionButton(_todo)
             : null;
 
@@ -237,18 +238,19 @@ class _TodoEditorPageState extends State<TodoEditorPage> {
           Future.delayed(
             Duration.zero,
             () {
-              final bool requireLogout = state.error == 'Token is expired';
+              final bool requireLogout =
+                  state.error == 'Exception: Token is expired';
 
               MessageDialog.show(context,
                   message: requireLogout
                       ? 'Token is expired. You need to re-login.'
                       : state.error);
 
-              _todoBloc.dispatch(TodoInitialized());
-
               if (requireLogout) {
                 _logOut();
               }
+
+              _todoBloc.dispatch(TodoInitialized());
             },
           );
         }

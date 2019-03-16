@@ -52,6 +52,8 @@ class CreateTodo extends TodoEvent {
   }) : super([title, content, priority, isDone]);
 }
 
+class TodosInitialized extends TodoEvent {}
+
 class TodoInitialized extends TodoEvent {}
 
 class UpdateTodo extends TodoEvent {
@@ -158,7 +160,9 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     TodoState currentState,
     TodoEvent event,
   ) async* {
-    if (event is TodoInitialized) {
+    if (event is TodosInitialized) {
+      yield TodosInitial();
+    } else if (event is TodoInitialized) {
       yield TodoInitial();
     } else if (event is FetchTodos) {
       yield* _mapFetchTodosToState();
@@ -182,7 +186,7 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
       final List<Todo> todos = await todoRepository.fetchTodos();
 
       yield TodosLoaded(todos: todos);
-    } catch (error) {
+    } on Exception catch (error) {
       yield TodosError(error: error.toString());
     }
   }

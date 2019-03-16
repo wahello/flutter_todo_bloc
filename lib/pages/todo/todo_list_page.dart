@@ -56,12 +56,15 @@ class _TodoListPageState extends State<TodoListPage> {
           Future.delayed(
             Duration.zero,
             () {
-              final bool requireLogout = state.error == 'Token is expired';
+              final bool requireLogout =
+                  state.error == 'Exception: Token is expired';
 
               MessageDialog.show(context,
                   message: requireLogout
                       ? 'Token is expired. You need to re-login.'
                       : state.error);
+
+              _todoBloc.dispatch(TodosInitialized());
 
               if (requireLogout) {
                 _logOut();
