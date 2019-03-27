@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'package:bloc/bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:http/http.dart' as http;
 
 import 'package:flutter_todo_bloc/.env.dart';
 import 'package:flutter_todo_bloc/pages/auth/auth_page.dart';
@@ -30,9 +29,7 @@ class SimpleBlocDelegate extends BlocDelegate {
 void main() {
   BlocSupervisor().delegate = SimpleBlocDelegate();
 
-  final FirebaseProvider firebaseProvider = FirebaseProvider(
-    client: http.Client(),
-  );
+  final FirebaseProvider firebaseProvider = FirebaseProvider();
 
   final SharedPreferencesProvider sharedPreferencesProvider =
       SharedPreferencesProvider();

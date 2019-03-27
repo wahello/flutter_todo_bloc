@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:meta/meta.dart';
 
 import 'package:flutter_todo_bloc/.env.dart';
 import 'package:flutter_todo_bloc/models/priority.dart';
@@ -10,10 +9,6 @@ import 'package:flutter_todo_bloc/models/user.dart';
 import 'package:flutter_todo_bloc/widgets/helpers/priority_helper.dart';
 
 class FirebaseProvider {
-  final http.Client client;
-
-  FirebaseProvider({@required this.client}) : assert(client != null);
-
   Future<User> authenticate(
     String email,
     String password,
